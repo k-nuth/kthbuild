@@ -1190,6 +1190,7 @@ class KnuthCxx11ABIFixer(ConanFile):
         self.output.info("configure() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
 
         if pure_c:
+            del self.settings.compiler.libcxx       #Pure-C Library
             return
 
         if self.options.get_safe("glibcxx_supports_cxx11_abi") is None:
