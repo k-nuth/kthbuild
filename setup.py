@@ -6,9 +6,9 @@
 
 from setuptools import setup
 
-__title__ = "kth-build"
+__title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
-__uri__ = "https://github.com/k-nuth/kth-build"
+__uri__ = "https://github.com/k-nuth/kthbuild"
 __version__ = "0.0.7"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
@@ -61,7 +61,7 @@ setup(
     # What does your project relate to?
     keywords='knuth crypto bitcoin btc bch cash build tool',
 
-    py_modules=["kth-build"],
+    py_modules=["kthbuild"],
 
     install_requires=install_requires,
     # setup_requires=setup_requires,

@@ -1,6 +1,6 @@
 |travis| |appveyor|
 
-kth-build
+kthbuild
 =========
 
 Knuth Building Tools
@@ -12,18 +12,18 @@ Stable version:
 
 .. code-block:: bash
 
-    $ pip install --upgrade kth-build
+    $ pip install --upgrade kthbuild
 
 Development version:
 
 .. code-block:: bash
 
-    $ pip install --upgrade --index-url https://test.pypi.org/pypi/ kth-build
+    $ pip install --upgrade --index-url https://test.pypi.org/pypi/ kthbuild
 
-.. |travis| image:: https://travis-ci.org/k-nuth/kth-build.svg?branch=master
- 		   :target: https://travis-ci.org/k-nuth/kth-build
+.. |travis| image:: https://travis-ci.org/k-nuth/kthbuild.svg?branch=master
+ 		   :target: https://travis-ci.org/k-nuth/kthbuild
  		   
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/k-nuth/kth-build?branch=master&svg=true
-  		     :target: https://ci.appveyor.com/project/k-nuth/kth-build?branch=master
+.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/k-nuth/kthbuild?branch=master&svg=true
+  		     :target: https://ci.appveyor.com/project/k-nuth/kthbuild?branch=master
 
 
