@@ -535,7 +535,8 @@ def get_repository():
     return os.getenv("BIPRIM_BINTRAY_REPOSITORY", DEFAULT_REPOSITORY)
 
 def get_conan_req_version():
-    return get_content('conan_req_version')
+    # return get_content('conan_req_version')
+    return get_content_default('conan_req_version', None)
 
 def get_conan_vars():
     org_name = os.getenv("CONAN_ORGANIZATION_NAME", DEFAULT_ORGANIZATION_NAME)
