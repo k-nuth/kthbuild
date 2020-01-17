@@ -397,13 +397,17 @@ def access_file(file_path):
         return f.read().replace('\n', '').replace('\r', '')
 
 def get_content(file_name):
+    print(__file__)
+    print(os.path.abspath(__file__))
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', file_name)
     return access_file(file_path)
 
 def get_content_default(file_name, default=None):
     try:
         return get_content(file_name)
-    except IOError:
+    except IOError as e:
+        print(file_name)
+        print(e)
         return default
 
 def get_version_from_file():
