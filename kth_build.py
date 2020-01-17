@@ -1186,8 +1186,11 @@ def get_requirements_from_file():
 
 
 class KnuthCxx11ABIFixer(ConanFile):
-    def configure(self):
+    def configure(self, pure_c=False):
         self.output.info("configure() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
+
+        if pure_c:
+            return
 
         if self.options.get_safe("glibcxx_supports_cxx11_abi") is None:
             return
