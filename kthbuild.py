@@ -1263,8 +1263,8 @@ class KnuthCxx11ABIFixer(ConanFile):
                     self.info.settings.compiler.libcxx = "libstdc++"
 
 class KnuthConanFile(KnuthCxx11ABIFixer):
-    if Version(conan_version) < Version(get_conan_req_version()):
-        raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (get_conan_req_version(), conan_version))
+    # if Version(conan_version) < Version(get_conan_req_version()):
+    #     raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (get_conan_req_version(), conan_version))
 
     def config_options(self):
         KnuthCxx11ABIFixer.config_options(self)
