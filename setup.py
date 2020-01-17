@@ -9,7 +9,7 @@ from setuptools import setup
 __title__ = "kth-build"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kth-build"
-__version__ = "0.0.5"
+__version__ = "0.0.6"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"

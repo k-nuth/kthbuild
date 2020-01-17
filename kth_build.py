@@ -1094,7 +1094,10 @@ def march_conan_manip(conanobj):
                 conanobj.output.warn("Microarchitecture '%s' is not recognized, but it will be automatically fixed to '%s'." % (conanobj.options.microarchitecture, fixed_march))
                 conanobj.options.microarchitecture = fixed_march
 
+
         if not march_exists_in(conanobj.options.microarchitecture, str(conanobj.settings.os), str(conanobj.settings.compiler), float(str(conanobj.settings.compiler.version))):
+            # TODO(fernando): print possible options for the platform (os, compiler, ...)
+        
             fixed_march = get_march(conanobj.options.microarchitecture, str(conanobj.settings.os), str(conanobj.settings.compiler), float(str(conanobj.settings.compiler.version)))
 
             if not conanobj.options.fix_march:
@@ -1185,12 +1188,18 @@ def get_requirements_from_file():
     return []
 
 
+def try_remove_glibcxx_supports_cxx11_abi(obj):
+    if obj.options.get_safe("glibcxx_supports_cxx11_abi") is None:
+        return
+    del obj.options.glibcxx_supports_cxx11_abi
+
 class KnuthCxx11ABIFixer(ConanFile):
     def configure(self, pure_c=False):
         self.output.info("configure() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
 
         if pure_c:
-            del self.settings.compiler.libcxx       #Pure-C Library
+            del self.settings.compiler.libcxx               #Pure-C Library
+            try_remove_glibcxx_supports_cxx11_abi(self)
             return
 
         if self.options.get_safe("glibcxx_supports_cxx11_abi") is None:
@@ -1256,6 +1265,39 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
     if Version(conan_version) < Version(get_conan_req_version()):
         raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (get_conan_req_version(), conan_version))
 
+    def config_options(self):
+        KnuthCxx11ABIFixer.config_options(self)
+
+        if self.settings.arch != "x86_64":
+            self.output.info("microarchitecture is disabled for architectures other than x86_64, your architecture: %s" % (self.settings.arch,))
+            self.options.remove("microarchitecture")
+            self.options.remove("fix_march")
+
+        if self.settings.compiler == "Visual Studio":
+            self.options.remove("fPIC")
+            if self.options.shared and self.msvc_mt_build:
+                self.options.remove("shared")
+
+    def configure(self):
+        # self.output.info("libcxx: %s" % (str(self.settings.compiler.libcxx),))
+        KnuthCxx11ABIFixer.configure(self)
+
+        if self.settings.arch == "x86_64" and self.options.microarchitecture == "_DUMMY_":
+            del self.options.fix_march
+
+        if self.settings.arch == "x86_64":
+            march_conan_manip(self)
+            self.options["*"].microarchitecture = self.options.microarchitecture
+
+    def package_id(self):
+        KnuthCxx11ABIFixer.package_id(self)
+
+        self.info.options.verbose = "ANY"
+        self.info.options.fix_march = "ANY"
+        self.info.options.cxxflags = "ANY"
+        self.info.options.cflags = "ANY"
+
+
     def add_reqs(self, reqs):
         for r in reqs:
             self.requires(r % (self.user, self.channel))
@@ -1273,8 +1315,6 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
     def msvc_mt_build(self):
         # return "MT" in str(self.settings.compiler.runtime)
         return "MT" in str(self.settings.get_safe("compiler.runtime"))
-
-        
 
     @property
     def fPIC_enabled(self):
