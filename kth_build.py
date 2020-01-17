@@ -1195,6 +1195,8 @@ def try_remove_glibcxx_supports_cxx11_abi(obj):
 
 class KnuthCxx11ABIFixer(ConanFile):
     def configure(self, pure_c=False):
+        ConanFile.configure(self)
+
         self.output.info("configure() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
 
         if pure_c:
@@ -1249,6 +1251,7 @@ class KnuthCxx11ABIFixer(ConanFile):
 
 
     def package_id(self):
+        ConanFile.package_id(self)
         self.output.info("package_id() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
         # self.info.settings.compiler.libcxx = "libstdc++11"
 
@@ -1258,8 +1261,6 @@ class KnuthCxx11ABIFixer(ConanFile):
                 if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
                     # self.info.settings.compiler.libcxx = "ANY"
                     self.info.settings.compiler.libcxx = "libstdc++"
-
-
 
 class KnuthConanFile(KnuthCxx11ABIFixer):
     if Version(conan_version) < Version(get_conan_req_version()):
@@ -1278,9 +1279,9 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             if self.options.shared and self.msvc_mt_build:
                 self.options.remove("shared")
 
-    def configure(self):
+    def configure(self, pure_c=False):
         # self.output.info("libcxx: %s" % (str(self.settings.compiler.libcxx),))
-        KnuthCxx11ABIFixer.configure(self)
+        KnuthCxx11ABIFixer.configure(self, pure_c)
 
         if self.settings.arch == "x86_64" and self.options.microarchitecture == "_DUMMY_":
             del self.options.fix_march
