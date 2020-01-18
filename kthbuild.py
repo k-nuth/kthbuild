@@ -19,6 +19,7 @@ from conans import __version__ as conan_version
 
 from subprocess import Popen, PIPE, STDOUT
 
+import inspect
 
 DEFAULT_ORGANIZATION_NAME = 'k-nuth'
 DEFAULT_LOGIN_USERNAME = 'fpelliccioni'
@@ -541,34 +542,35 @@ def get_repository():
 
 
 
-def get_content2(file_name):
-    print(__file__)
-    print(os.path.abspath(__file__))
+def get_content_with_dir(dir, file_name):
+    # print(__file__)
+    # print(os.path.abspath(__file__))
 
-    print('sys.argv[0] =', sys.argv[0])             
-    pathname = os.path.dirname(sys.argv[0])        
-    print('path =', pathname)
-    print('full path =', os.path.abspath(pathname)) 
+    # print('sys.argv[0] =', sys.argv[0])             
+    # pathname = os.path.dirname(sys.argv[0])        
+    # print('path =', pathname)
+    # print('full path =', os.path.abspath(pathname)) 
 
-    file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', file_name)
+    # file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', file_name)
+    file_path = os.path.join(dir, file_name)
     return access_file(file_path)
 
-def get_content_default2(file_name, default=None):
+def get_content_default_with_dir(dir, file_name, default=None):
     try:
-        return get_content2(file_name)
+        return get_content_with_dir(dir, file_name)
     except IOError as e:
-        print(file_name)
-        print(e)
+        # print(file_name)
+        # print(e)
         return default
 
 
 
 
 
-def get_conan_req_version():
+def get_conan_req_version(recipe_path):
     # return get_content('conan_req_version')
     # return get_content_default('conan_req_version', None)
-    return get_content_default2('conan_req_version', None)
+    return get_content_default_with_dir(recipe_path, 'conan_req_version', None)
 
 def get_conan_vars():
     org_name = os.getenv("CONAN_ORGANIZATION_NAME", DEFAULT_ORGANIZATION_NAME)
@@ -1227,6 +1229,7 @@ def try_remove_glibcxx_supports_cxx11_abi(obj):
     del obj.options.glibcxx_supports_cxx11_abi
 
 class KnuthCxx11ABIFixer(ConanFile):
+
     def configure(self, pure_c=False):
         ConanFile.configure(self)
 
@@ -1296,8 +1299,9 @@ class KnuthCxx11ABIFixer(ConanFile):
                     self.info.settings.compiler.libcxx = "libstdc++"
 
 class KnuthConanFile(KnuthCxx11ABIFixer):
-    if Version(conan_version) < Version(get_conan_req_version()):
-        raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (get_conan_req_version(), conan_version))
+    @property
+    def conan_req_version(self):
+        return get_conan_req_version(self.recipe_dir())
 
     def config_options(self):
         KnuthCxx11ABIFixer.config_options(self)
@@ -1313,6 +1317,9 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
                 self.options.remove("shared")
 
     def configure(self, pure_c=False):
+        if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
+            raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (self.conan_req_version, conan_version))
+
         # self.output.info("libcxx: %s" % (str(self.settings.compiler.libcxx),))
         KnuthCxx11ABIFixer.configure(self, pure_c)
 
