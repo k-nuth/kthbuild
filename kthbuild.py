@@ -27,6 +27,10 @@ DEFAULT_USERNAME = 'kth'
 DEFAULT_REPOSITORY = 'kth'
 
 
+def get_base_microarchitectures():
+    return ['haswell']
+
+
 def get_tempfile_name():
     return os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
 
@@ -398,8 +402,6 @@ def access_file(file_path):
         return f.read().replace('\n', '').replace('\r', '')
 
 def get_content(file_name):
-    print(__file__)
-    print(os.path.abspath(__file__))
     file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', file_name)
     return access_file(file_path)
 
@@ -407,21 +409,22 @@ def get_content_default(file_name, default=None):
     try:
         return get_content(file_name)
     except IOError as e:
-        print(file_name)
-        print(e)
         return default
 
-def get_version_from_file():
+def get_version_from_file(recipe_dir):
+    return get_content_default_with_dir(recipe_dir, 'conan_version')
+
+def get_version_from_file_no_recipe_dir():
     return get_content_default('conan_version')
 
-def get_version():
+def get_version_no_recipe_dir():
     # print("get_version()----------------------------------------------------------")
     # print("KNUTH_BRANCH:        %s" % (os.getenv("KNUTH_BRANCH", None),))
     # print("KNUTH_CONAN_CHANNEL: %s" % (os.getenv("KNUTH_CONAN_CHANNEL", None),))
     # print("KNUTH_FULL_BUILD:    %s" % (os.getenv("KNUTH_FULL_BUILD", None),))
     # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
 
-    version = get_version_from_file()
+    version = get_version_from_file_no_recipe_dir()
 
     # print('------------------------------------------------------')
     # print("version 1: %s" % (version,))
@@ -445,14 +448,45 @@ def get_version():
 
     return version
 
-def get_version_no_releases(default=None):
+def get_version(recipe_dir):
     # print("get_version()----------------------------------------------------------")
     # print("KNUTH_BRANCH:        %s" % (os.getenv("KNUTH_BRANCH", None),))
     # print("KNUTH_CONAN_CHANNEL: %s" % (os.getenv("KNUTH_CONAN_CHANNEL", None),))
     # print("KNUTH_FULL_BUILD:    %s" % (os.getenv("KNUTH_FULL_BUILD", None),))
     # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
 
-    version = get_version_from_file()
+    version = get_version_from_file(recipe_dir)
+
+    # print('------------------------------------------------------')
+    # print("version 1: %s" % (version,))
+
+    if version is None:
+        version = os.getenv("KNUTH_CONAN_VERSION", None)
+
+    # print("version 2: %s" % (version,))
+    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+
+    if version is None:
+        version = get_version_from_branch_name()
+
+    # print("version 3: %s" % (version,))
+
+    if version is None:
+        version = get_version_from_git_describe(None, is_development_branch())
+
+    # print("version 4: %s" % (version,))
+    # print('------------------------------------------------------')
+
+    return version
+
+def get_version_no_releases(recipe_dir, default=None):
+    # print("get_version()----------------------------------------------------------")
+    # print("KNUTH_BRANCH:        %s" % (os.getenv("KNUTH_BRANCH", None),))
+    # print("KNUTH_CONAN_CHANNEL: %s" % (os.getenv("KNUTH_CONAN_CHANNEL", None),))
+    # print("KNUTH_FULL_BUILD:    %s" % (os.getenv("KNUTH_FULL_BUILD", None),))
+    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+
+    version = get_version_from_file(recipe_dir)
 
     # print('------------------------------------------------------')
     # print("version 1: %s" % (version,))
@@ -496,9 +530,11 @@ def get_version_no_releases(default=None):
 #     return version
 
 
-def get_channel_from_file():
+def get_channel_from_file_no_recipe_dir():
     return get_content_default('conan_channel')
 
+def get_channel_from_file(recipe_dir):
+    return get_content_default_with_dir(recipe_dir, 'conan_channel')
 
 def branch_to_channel(branch):
     if branch is None:
@@ -517,8 +553,10 @@ def branch_to_channel(branch):
 def get_channel_from_branch():
     return branch_to_channel(get_branch())
     
-def get_channel():
-    channel = get_channel_from_file()
+    
+
+def get_channel_no_recipe_dir():
+    channel = get_channel_from_file_no_recipe_dir()
 
     if channel is None:
         channel = os.getenv("KNUTH_CONAN_CHANNEL", None)
@@ -532,9 +570,26 @@ def get_channel():
 
     return channel
 
-def get_user():
-    # return get_content('conan_user')
+def get_channel(recipe_dir):
+    channel = get_channel_from_file(recipe_dir)
+
+    if channel is None:
+        channel = os.getenv("KNUTH_CONAN_CHANNEL", None)
+
+    if channel is None:
+        channel = get_channel_from_branch()
+
+    if channel is None:
+        channel = 'staging'
+
+    return channel
+
+def get_user(recipe_dir):
+    return get_content_default_with_dir(recipe_dir, 'conan_user', DEFAULT_USERNAME)
+
+def get_user_no_recipe_dir():
     return get_content_default('conan_user', DEFAULT_USERNAME)
+
 
 def get_repository():
     return os.getenv("BIPRIM_BINTRAY_REPOSITORY", DEFAULT_REPOSITORY)
@@ -567,17 +622,16 @@ def get_content_default_with_dir(dir, file_name, default=None):
 
 
 
-def get_conan_req_version(recipe_path):
-    # return get_content('conan_req_version')
+def get_conan_req_version(recipe_dir):
     # return get_content_default('conan_req_version', None)
-    return get_content_default_with_dir(recipe_path, 'conan_req_version', None)
+    return get_content_default_with_dir(recipe_dir, 'conan_req_version', None)
 
-def get_conan_vars():
+def get_conan_vars(recipe_dir):
     org_name = os.getenv("CONAN_ORGANIZATION_NAME", DEFAULT_ORGANIZATION_NAME)
     login_username = os.getenv("CONAN_LOGIN_USERNAME", DEFAULT_LOGIN_USERNAME)
-    username = os.getenv("CONAN_USERNAME", get_user())
-    channel = os.getenv("CONAN_CHANNEL", get_channel())
-    version = os.getenv("CONAN_VERSION", get_version())
+    username = os.getenv("CONAN_USERNAME", get_user_no_recipe_dir())
+    channel = os.getenv("CONAN_CHANNEL", get_channel_no_recipe_dir())
+    version = os.getenv("CONAN_VERSION", get_version_no_recipe_dir())
     return org_name, login_username, username, channel, version
 
 def get_value_from_recipe(search_string, recipe_name="conanfile.py"):
@@ -683,7 +737,6 @@ def filter_marchs_tests(name, builds, test_options, march_opt=None):
 # https://gcc.gnu.org/onlinedocs/gcc-9.1.0/gcc/x86-Options.html#x86-Options
 
 
-microarchitecture_default = 'x86_64'
 
 def get_cpuid():
     try:
@@ -700,11 +753,16 @@ def get_cpu_microarchitecture_or_default(default):
         # return '%s%s' % cpuid.cpu_microarchitecture()
         return '%s' % (''.join(cpuid.cpu_microarchitecture()))
     else:
+        self.output.warn("cpuid module not installed")
         return default
 
-def get_cpu_microarchitecture():
-    return get_cpu_microarchitecture_or_default(microarchitecture_default)
+# microarchitecture_default = 'x86_64'
+# def get_cpu_microarchitecture():
+#     return get_cpu_microarchitecture_or_default(microarchitecture_default)
 
+
+def get_cpu_microarchitecture():
+    return get_cpu_microarchitecture_or_default(None)
 
 
 
@@ -1408,14 +1466,14 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         try:
             return super(KnuthConanFile, self).channel
         except ConanException:
-            return get_channel()
+            return get_channel(self.recipe_dir())
 
     @property
     def user(self):
         try:
             return super(KnuthConanFile, self).user
         except ConanException:
-            return get_user()
+            return get_user(self.recipe_dir())
 
 
 
