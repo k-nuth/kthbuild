@@ -53,4 +53,13 @@ sudo docker run --rm -ti conanio/clang60 /bin/bash
 
 
 # Clang 9
-clang -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -mavx512vp2intersect -msha -mclwb -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16
+clang -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mlzcnt -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -mavx512vp2intersect -msha -mclwb  -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16 main.c
+      
+# Clang 8
+clang -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mlzcnt -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -msha -mclwb  -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16 main.c
+
+# Clang 7
+clang -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mlzcnt -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -msha -mclwb  -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16 main.c
+
+# Clang 6.0
+clang -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mlzcnt -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -msha -mclwb  -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16 main.c
