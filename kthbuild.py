@@ -18,8 +18,53 @@ from conans.model.version import Version
 from conans import __version__ as conan_version
 
 from subprocess import Popen, PIPE, STDOUT
-
 import inspect
+from collections import deque
+
+
+base94_charset = ''.join(map(chr, range(33,127)))
+base58_charset = '123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ'
+
+def base58_flex_encode(val, chrset=base58_charset):
+    """\
+    Returns a value encoded using 'chrset' regardless of length and 
+    composition... well, needs 2 printable asccii chars minimum...
+
+    :param val: base-10 integer value to encode as base*
+    :param chrset: the characters to use for encoding
+
+    Note: While this could encrypt some value, it is an insecure toy. 
+
+    """
+    basect = len(chrset)
+    assert basect > 1
+    encode = deque()
+
+    while val > 0:
+        val, mod = divmod(val, basect)
+        encode.appendleft(chrset[mod])
+
+    return ''.join(encode)
+
+def base58_flex_decode(enc, chrset=base58_charset):
+    """\
+    Returns the 'chrset'-decoded value of 'enc'. Of course this needs to use 
+    the exact same charset as when to encoding the value.
+
+    :param enc: base-* encoded value to decode
+    :param chrset: the character-set used for original encoding of 'enc' value
+
+    Note: Did you read the 'encode' note above? Splendid, now have 
+             some fun... somewhere...
+
+    """
+    basect = len(chrset)
+    decoded = 0
+
+    for e, c in enumerate(enc[::-1]):
+        decoded += ((basect**e) * chrset.index(c))
+
+    return decoded
 
 DEFAULT_ORGANIZATION_NAME = 'k-nuth'
 DEFAULT_LOGIN_USERNAME = 'fpelliccioni'
@@ -29,7 +74,6 @@ DEFAULT_REPOSITORY = 'kth'
 
 def get_base_microarchitectures():
     return ['haswell']
-
 
 def get_tempfile_name():
     return os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
@@ -2018,55 +2062,8 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 import cpuid
 import base64
 import string
-import base58
+# import base58
 from enum import Enum
-
-
-# # x = base58.encode(37778931862960419483135)
-
-# o = 37778931862960419483135
-# print(o)
-# x = base58.flex_encode(o)
-# print(x)
-# x_dec = base58.flex_decode(x)
-# print(x_dec)
-
-
-# # digs = string.digits + string.ascii_letters
-# # 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
-# digs = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-# print(digs)
-
-# def int2base(x, base):
-#     if x < 0:
-#         sign = -1
-#     elif x == 0:
-#         return digs[0]
-#     else:
-#         sign = 1
-
-#     x *= sign
-#     digits = []
-
-#     while x:
-#         digits.append(digs[int(x % base)])
-#         x = int(x / base)
-
-#     if sign < 0:
-#         digits.append('-')
-
-#     digits.reverse()
-
-#     return ''.join(digits)
-
-# # import numpy
-# print(37778931862960419483135)
-# print(int2base(37778931862960419483135, 58))
-# # numpy.base_repr(10, base=3)
-# base94 = ''.join(map(chr, range(33,127)))
-# print(base94)
-
-
 
 
 
@@ -3771,11 +3768,11 @@ def encode_extensions(exts):
     exts = _to_chars_bin(exts)
     exts_str = ''.join(reversed(exts))
     exts_num = int(exts_str, 2)
-    exts_num_b58 = base58.flex_encode(exts_num)
+    exts_num_b58 = base58_flex_encode(exts_num)
     return exts_num_b58
 
 def decode_extensions(architecture_id):
-    exts_num = base58.flex_decode(architecture_id)
+    exts_num = base58_flex_decode(architecture_id)
     res = "{0:b}".format(exts_num)
     res = res.zfill(len(extensions_map))
     return _to_ints_bin([*reversed(res)])
@@ -4227,78 +4224,3 @@ intel_marchs = {
 # # haswell xls [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 # # calculated  [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-
-# # architecture_id = encode_extensions(exts)
-# # print(architecture_id)
-# # print(decode_extensions(architecture_id))
-
-
-
-
-# # data_str = ''.join(reversed(data))
-# # print(data_str)
-# # data_num = int(data_str, 2)
-# # print(data_num)
-# # print(hex(data_num))
-
-# # data_num_b58 = base58.flex_encode(data_num)
-# # print(data_num_b58)
-# # x_dec = base58.flex_decode(data_num_b58)
-# # print(x_dec)
-
-
-
-# # 0x80000000000c22dadff
-
-# # print(base64.b64encode(bytes([data_num])))
-# # print(base64.b64encode(bytes(data2)))
-
-# # data = ['0' for _ in range(256)]
-# # print(data)
-
-# # print("".join(data))
-
-
-# # print(extensions[0]())
-# # print(extensions_map[1]())
-# # print(extensions_map[2]())
-# # print(extensions_map[9]())
-# # print(extensions_map[13]())
-# # # print(extensions_map[75]())
-# # print(extensions_map[76]())
-
-
-
-# # print(support_xsave_cpu())
-# # print(support_osxsave())
-# # print(support_xsaveopt_cpu())
-
-
-
-
-
-
-# # machdep.cpu.signature: 263777
-# # machdep.cpu.brand: 0
-# # machdep.cpu.features: 
-
-# # FPU VME DE PSE TSC MSR PAE MCE CX8 APIC SEP MTRR PGE MCA CMOV PAT PSE36 CLFSH 
-# # DS ACPI MMX FXSR SSE SSE2 SS HTT TM PBE SSE3 PCLMULQDQ DTES64 MON DSCPL VMX SMX 
-# # EST TM2 SSSE3 FMA CX16 TPR PDCM SSE4.1 SSE4.2 x2APIC MOVBE POPCNT AES PCID 
-# # XSAVE OSXSAVE SEGLIM64 TSCTMR AVX1.0 RDRAND F16C
-
-# # machdep.cpu.leaf7_features: 
-
-# # RDWRFSGS TSC_THREAD_OFFSET BMI1 AVX2 SMEP BMI2 ERMS INVPCID FPU_CSDS MDCLEAR 
-# # IBRS STIBP L1DF SSBD
-
-# # machdep.cpu.extfeatures: 
-
-# # SYSCALL XD 1GBPAGE EM64T LAHF LZCNT RDTSCP TSCI
-
-# # machdep.cpu.logical_per_package: 16
-# # machdep.cpu.cores_per_package: 8
-# # machdep.cpu.microcode_version: 27
-# # machdep.cpu.processor_flag: 5
-# # machdep.cpu.mwait.linesize_min: 64
-# # machdep.cpu.mwait.linesize_max: 64
