@@ -678,15 +678,16 @@ def get_conan_vars(recipe_dir):
     version = os.getenv("CONAN_VERSION", get_version_no_recipe_dir())
     return org_name, login_username, username, channel, version
 
-def get_value_from_recipe(search_string, recipe_name="conanfile.py"):
-    recipe_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', recipe_name)
+def get_value_from_recipe(recipe_dir, search_string, recipe_name="conanfile.py"):
+    # recipe_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', recipe_name)
+    recipe_path = os.path.join(recipe_dir, '..', recipe_name)
     with open(recipe_path, "r") as conanfile:
         contents = conanfile.read()
         result = re.search(search_string, contents)
     return result
 
-def get_name_from_recipe():
-    return get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''').groups()[0]
+def get_name_from_recipe(recipe_dir):
+    return get_value_from_recipe(recipe_dir, r'''name\s*=\s*["'](\S*)["']''').groups()[0]
 
 def get_user_repository(org_name, repository_name):
     # https://api.bintray.com/conan/k-nuth/kth
@@ -723,8 +724,8 @@ def get_archs():
     # return split_colon_env("CONAN_ARCHS") if archs else None
 
 
-def get_builder(args=None):
-    name = get_name_from_recipe()
+def get_builder(recipe_dir, args=None):
+    name = get_name_from_recipe(recipe_dir)
     org_name, login_username, username, channel, version = get_conan_vars()
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(org_name)
