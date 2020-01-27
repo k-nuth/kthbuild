@@ -1,0 +1,56 @@
+------------------------------------------------------------------------------------------------
+GCC
+------------------------------------------------------------------------------------------------
+
+echo 'int main() {}' >main.c
+cat main.c
+gcc --version
+
+# GCC 10
+gcc -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -mavx512vp2intersect -msha -mclwb -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16
+
+# GCC 9
+gcc -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -msha -mclwb  -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16 main.c
+
+# GCC 8
+gcc -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -msha -mclwb  -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16 main.c
+
+# GCC 7
+gcc -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vpopcntdq -msha -mclwb  -mrdpid -mprfchw -mcx16 main.c
+
+# GCC 6
+gcc -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vpopcntdq -msha -mclwb  -mrdpid -mprfchw -mcx16 main.c
+
+# GCC 5
+gcc -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vpopcntdq -msha -mclwb  -mrdpid -mprfchw -mcx16 main.c
+
+sudo docker run --rm -ti conanio/gcc5 /bin/bash
+sudo docker run --rm -ti conanio/gcc6 /bin/bash
+sudo docker run --rm -ti conanio/gcc7 /bin/bash
+sudo docker run --rm -ti conanio/gcc8 /bin/bash
+sudo docker run --rm -ti conanio/gcc9 /bin/bash
+
+TODO: probar GCC 4.9
+sudo docker run --rm -ti conanio/gcc49 /bin/bash
+
+------------------------------------------------------------------------------------------------
+
+
+
+------------------------------------------------------------------------------------------------
+Clang
+------------------------------------------------------------------------------------------------
+
+echo 'int main() {}' >main.c
+cat main.c
+clang --version
+
+
+sudo docker run --rm -ti conanio/clang9 /bin/bash
+sudo docker run --rm -ti conanio/clang8 /bin/bash
+sudo docker run --rm -ti conanio/clang7 /bin/bash
+sudo docker run --rm -ti conanio/clang60 /bin/bash
+
+
+# Clang 9
+clang -m64 -mmovbe -mmmx -msse -msse2 -msse3 -mssse3 -msse4.1 -msse4.2 -mpopcnt -mlzcnt -mpku -mavx -mavx2 -maes -mpclmul -mfsgsbase -mrdrnd -mfma -mabm -mbmi -mbmi2 -mf16c -mrdseed -madx -mprfchw -mclflushopt -mxsave -mxsaveopt -mxsavec -mxsaves -mavx512f -mavx512vl -mavx512bw -mavx512dq -mavx512cd -mavx512vbmi -mavx512ifma -mavx512vbmi2 -mavx512vpopcntdq -mavx512bitalg -mavx512vnni -mavx512vp2intersect -msha -mclwb -mrdpid -mgfni -mvpclmulqdq -mvaes -mpconfig -mwbnoinvd -mmovdiri -mmovdir64b -mprfchw -mcx16
