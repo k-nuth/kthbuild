@@ -673,9 +673,9 @@ def get_conan_req_version(recipe_dir):
 def get_conan_vars(recipe_dir):
     org_name = os.getenv("CONAN_ORGANIZATION_NAME", DEFAULT_ORGANIZATION_NAME)
     login_username = os.getenv("CONAN_LOGIN_USERNAME", DEFAULT_LOGIN_USERNAME)
-    username = os.getenv("CONAN_USERNAME", get_user_no_recipe_dir())
-    channel = os.getenv("CONAN_CHANNEL", get_channel_no_recipe_dir())
-    version = os.getenv("CONAN_VERSION", get_version_no_recipe_dir())
+    username = os.getenv("CONAN_USERNAME", get_user(recipe_dir))
+    channel = os.getenv("CONAN_CHANNEL", get_channel(recipe_dir))
+    version = os.getenv("CONAN_VERSION", get_version(recipe_dir))
     return org_name, login_username, username, channel, version
 
 def get_value_from_recipe(recipe_dir, search_string, recipe_name="conanfile.py"):
@@ -726,7 +726,7 @@ def get_archs():
 
 def get_builder(recipe_dir, args=None):
     name = get_name_from_recipe(recipe_dir)
-    org_name, login_username, username, channel, version = get_conan_vars()
+    org_name, login_username, username, channel, version = get_conan_vars(recipe_dir)
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(org_name)
     remotes = os.getenv("CONAN_REMOTES", get_conan_remotes(org_name))
