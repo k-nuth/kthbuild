@@ -680,7 +680,7 @@ def get_conan_vars(recipe_dir):
 
 def get_value_from_recipe(recipe_dir, search_string, recipe_name="conanfile.py"):
     # recipe_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', recipe_name)
-    recipe_path = os.path.join(recipe_dir, '..', recipe_name)
+    recipe_path = os.path.join(recipe_dir, recipe_name)
     with open(recipe_path, "r") as conanfile:
         contents = conanfile.read()
         result = re.search(search_string, contents)
