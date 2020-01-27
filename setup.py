@@ -9,7 +9,7 @@ from setuptools import setup
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.13"
+__version__ = "0.0.14"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -18,7 +18,7 @@ __copyright__ = "Copyright (c) 2020 Fernando Pelliccioni"
 
 install_requires = [
     "conan >= 1.21.1",
-    "cpuid >= 0.0.6",
+    "cpuid >= 0.0.9",
 ]
 
 setup(
