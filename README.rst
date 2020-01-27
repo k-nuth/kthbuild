@@ -3,7 +3,7 @@
 kthbuild
 =========
 
-Knuth Building Tools
+Knuth Building Tools (Alpha version)
 
 Getting started 
 ---------------
