@@ -765,8 +765,11 @@ def get_builder(recipe_dir, args=None):
             # conans.errors.NoRemoteAvailable: No remote 'upload_repo' defined in remotes
             # Build success    
 
-    # print(org_name)
-    # print(remotes)
+    print(org_name)
+    print(remotes)
+    print(upload)
+    
+
 
     # upload_when_stable = get_upload_when_stable()
     # stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
