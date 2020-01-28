@@ -781,8 +781,8 @@ def get_builder(recipe_dir, args=None):
     builder = get_conan_packager().ConanMultiPackager(
         # args=args,    # Removed on https://github.com/conan-io/conan-package-tools/pull/269
         # pip_install=["kthbuild==0.17.0", "conan-promote==0.1.2"]
-        # pip_install=["kthbuild"],
-        pip_install=["--install-option='--no-remotes=True' kthbuild"],
+        # pip_install=["--install-option='--no-remotes=True' kthbuild"],
+        pip_install=["kthbuild"],
         username=username,
         login_username=login_username,
         channel=channel,

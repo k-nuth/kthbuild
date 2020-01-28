@@ -12,7 +12,7 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.37"
+__version__ = "0.0.38"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -59,8 +59,6 @@ def running_in_cpt_context():
            os.getenv("CONAN_REMOTES", None) != None or     
            os.getenv("CONAN_REFERENCE", None) != None or     
            os.getenv("CPT_PROFILE", None) != None)
-
-
 
 class PostInstallCommand(install):
     """Override Install
