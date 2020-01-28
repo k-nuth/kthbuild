@@ -706,8 +706,11 @@ def get_conan_upload_for_remote(org_name):
 
 def get_conan_remotes(org_name):
     # While redundant, this moves upload remote to position 0.
+    # remotes = [get_conan_upload_for_remote(org_name),
+    #           'https://api.bintray.com/conan/k-nuth/kth',
+    #           'https://api.bintray.com/conan/bitprim/bitprim']
+
     remotes = [get_conan_upload_for_remote(org_name),
-              'https://api.bintray.com/conan/k-nuth/kth',
               'https://api.bintray.com/conan/bitprim/bitprim']
 
     # # Add bincrafters repository for other users, e.g. if the package would
@@ -734,6 +737,10 @@ def get_builder(recipe_dir, args=None):
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(org_name)
     remotes = os.getenv("CONAN_REMOTES", get_conan_remotes(org_name))
+
+    print(org_name)
+    print(remotes)
+
 
     # upload_when_stable = get_upload_when_stable()
     # stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
