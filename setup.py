@@ -7,11 +7,12 @@
 from setuptools import setup
 from setuptools.command.install import install
 import subprocess
+import os
 
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.36"
+__version__ = "0.0.37"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -23,31 +24,54 @@ install_requires = [
     "cpuid >= 0.0.9",
 ]
 
+# class PostInstallCommand(install):
+#     """Override Install
+#     """
+
+#     user_options = install.user_options + [
+#         ('no-remotes=', None, 'Do not add conan remotes')
+#     ]
+
+#     def initialize_options(self):
+#         install.initialize_options(self)
+#         self.no_remotes = False
+
+#     def finalize_options(self):
+#         print('no-remotes option: ', self.no_remotes)
+#         install.finalize_options(self)
+
+#     def run(self):
+#         """If necessary, create plugin directory, install and change file owner
+#         :return: None
+#         """
+#         install.run(self)
+#         if not self.no_remotes:
+#             self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
+#             self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
+        
+
+def running_in_cpt_context():
+    # -e CONAN_UPLOAD="https://api.bintray.com/conan/k-nuth/kth@True@upload_repo" 
+    # -e CONAN_REMOTES="https://api.bintray.com/conan/k-nuth/kth@True@upload_repo,https://api.bintray.com/conan/bitprim/bitprim@True@remote1" 
+    # -e CONAN_REFERENCE="kth-infrastructure/0.6.0@kth/feature-ci-marchs" 
+    # -e CPT_PROFILE="@@include(default)@@@@[settings]@@arch=x86_64@@build_type=Release@@compiler=gcc@@compiler.version=9@@[options]@@kth-infrastructure:shared=False@@kth-infrastructure:march_id=4fZKi37a595hP@@kth-infrastructure:with_tests=False@@kth-infrastructure:with_examples=False@@[env]@@KNUTH_BRANCH=feature-ci-marchs@@KNUTH_CONAN_CHANNEL=feature-ci-marchs@@KNUTH_FULL_BUILD=0@@KNUTH_CONAN_VERSION=0.6.0@@[build_requires]@@@@" 
+    return os.getenv("CONAN_UPLOAD", None) != None or
+           os.getenv("CONAN_REMOTES", None) != None or     
+           os.getenv("CONAN_REFERENCE", None) != None or     
+           os.getenv("CPT_PROFILE", None) != None
+
+
+
 class PostInstallCommand(install):
     """Override Install
     """
-
-    user_options = install.user_options + [
-        ('no-remotes=', None, 'Do not add conan remotes')
-    ]
-
-    def initialize_options(self):
-        install.initialize_options(self)
-        self.no_remotes = False
-
-    def finalize_options(self):
-        print('no-remotes option: ', self.no_remotes)
-        install.finalize_options(self)
-
     def run(self):
-        """If necessary, create plugin directory, install and change file owner
-        :return: None
-        """
         install.run(self)
-        if not self.no_remotes:
+        if not running_in_cpt_context():
             self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
             self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
-        
+
+
     def __setup_conan_remote(self, remote_alias, remote_url):
         try:
             # remote_alias = "kthbuild_kth_temp_"
