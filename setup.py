@@ -5,11 +5,12 @@
 # 
 
 from setuptools import setup
+from setuptools.command.install import install
 
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.23"
+__version__ = "0.0.24"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -20,6 +21,12 @@ install_requires = [
     "conan >= 1.21.1",
     "cpuid >= 0.0.9",
 ]
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+    def run(self):
+        print('********** PostInstallCommand **********')
+        install.run(self)
 
 setup(
     name = __title__,
@@ -59,7 +66,7 @@ setup(
     ],    
 
     # What does your project relate to?
-    keywords='knuth crypto bitcoin btc bch cash build tool',
+    keywords='knuth kth crypto bitcoin btc bch cash build tool',
 
     py_modules=["kthbuild"],
 
@@ -71,6 +78,11 @@ setup(
         'https://testpypi.python.org/pypi',
         # 'https://testpypi.python.org/pypi/cpuid-native/',
     ],
+
+    cmdclass={
+        'install': PostInstallCommand,
+    },
+
 
     # extras_require={
     #     'dev': ['check-manifest'],
