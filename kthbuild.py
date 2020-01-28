@@ -738,9 +738,35 @@ def get_builder(recipe_dir, args=None):
     upload = get_conan_upload(org_name)
     remotes = os.getenv("CONAN_REMOTES", get_conan_remotes(org_name))
 
-    print(org_name)
-    print(remotes)
+    #TODO(fernando): check why when a remote is set before get_builder() call we get the following error:
+            #  >> Verifying credentials...
+            # Traceback (most recent call last):
+            #   File "C:\Python37\lib\site-packages\conans\client\cache\remote_registry.py", line 219, in __getitem__
+            #     remote = self._remotes[remote_name]
+            # KeyError: 'upload_repo'
+            # During handling of the above exception, another exception occurred:
+            # Traceback (most recent call last):
+            #   File "build.py", line 38, in <module>
+            #     builder.run()
+            #   File "C:\Python37\lib\site-packages\cpt\packager.py", line 505, in run
+            #     self.auth_manager.login(self.remotes_manager.upload_remote_name)
+            #   File "C:\Python37\lib\site-packages\cpt\auth.py", line 106, in login
+            #     self._conan_api.authenticate(user, password, remote_name)
+            #   File "C:\Python37\lib\site-packages\conans\client\conan_api.py", line 81, in wrapper
+            #     return f(api, *args, **kwargs)
+            #   File "C:\Python37\lib\site-packages\conans\client\conan_api.py", line 794, in authenticate
+            #     remote = self.get_remote_by_name(remote_name)
+            #   File "C:\Python37\lib\site-packages\conans\client\conan_api.py", line 81, in wrapper
+            #     return f(api, *args, **kwargs)
+            #   File "C:\Python37\lib\site-packages\conans\client\conan_api.py", line 1079, in get_remote_by_name
+            #     return self.app.cache.registry.load_remotes()[remote_name]
+            #   File "C:\Python37\lib\site-packages\conans\client\cache\remote_registry.py", line 225, in __getitem__
+            #     raise NoRemoteAvailable("No remote '%s' defined in remotes" % (remote_name))
+            # conans.errors.NoRemoteAvailable: No remote 'upload_repo' defined in remotes
+            # Build success    
 
+    # print(org_name)
+    # print(remotes)
 
     # upload_when_stable = get_upload_when_stable()
     # stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
