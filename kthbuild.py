@@ -1617,7 +1617,6 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
                     cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
         pass_march_to_compiler(self, cmake)
-        cmake.configure(source_dir=self.source_folder)
         # self.output.info("CONAN_CXX_FLAGS: %s" % (cmake.definitions["CONAN_CXX_FLAGS"], ))
         # self.output.info("cmake.command_line: %s" % (cmake.command_line, ))
         return cmake
