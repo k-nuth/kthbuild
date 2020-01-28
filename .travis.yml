@@ -54,7 +54,7 @@ script:
   - |
     if [[ "${UPLOAD_PKG}" == "true" ]]; then
         python setup.py sdist
-        python setup.py bdist_wheel --universal
+        # python setup.py bdist_wheel --universal
     fi    
 
   - |

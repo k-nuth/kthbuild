@@ -5,11 +5,13 @@
 # 
 
 from setuptools import setup
+from setuptools.command.install import install
+import subprocess
 
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.26"
+__version__ = "0.0.27"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -20,6 +22,37 @@ install_requires = [
     "conan >= 1.21.1",
     "cpuid >= 0.0.9",
 ]
+
+class PostInstallCommand(install):
+    """Override Install
+    """
+    def run(self):
+        """If necessary, create plugin directory, install and change file owner
+        :return: None
+        """
+        install.run(self)
+        self.__setup_conan_remote()
+
+    def __setup_conan_remote(self):
+        try:
+            remote_alias = "kthbuild_kth_temp_"
+            remote_url = 'https://api.bintray.com/conan/k-nuth/kth'
+            params = ["conan", "remote", "add", remote_alias, remote_url]
+            res = subprocess.Popen(params, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, _ = res.communicate()
+            if output:
+                if res.returncode == 0:
+                    # return output.decode("utf-8")
+                    print("OK in __setup_conan_remote")
+
+            print("Error in __setup_conan_remote 0")
+            # return default
+        except OSError: # as e:
+            print("Error in __setup_conan_remote 1")
+            # return default
+        except:
+            print("Error in __setup_conan_remote 2")
+            # return default
 
 setup(
     name = __title__,
@@ -71,6 +104,8 @@ setup(
         'https://testpypi.python.org/pypi',
         # 'https://testpypi.python.org/pypi/cpuid-native/',
     ],
+
+    cmdclass={'install': PostInstallCommand},
 
     # extras_require={
     #     'dev': ['check-manifest'],
