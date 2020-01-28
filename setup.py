@@ -11,7 +11,7 @@ import subprocess
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.27"
+__version__ = "0.0.28"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -31,12 +31,14 @@ class PostInstallCommand(install):
         :return: None
         """
         install.run(self)
-        self.__setup_conan_remote()
+        self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
+        self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
+        
 
-    def __setup_conan_remote(self):
+    def __setup_conan_remote(self, remote_alias, remote_url):
         try:
-            remote_alias = "kthbuild_kth_temp_"
-            remote_url = 'https://api.bintray.com/conan/k-nuth/kth'
+            # remote_alias = "kthbuild_kth_temp_"
+            # remote_url = 'https://api.bintray.com/conan/k-nuth/kth'
             params = ["conan", "remote", "add", remote_alias, remote_url]
             res = subprocess.Popen(params, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, _ = res.communicate()
