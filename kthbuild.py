@@ -1334,8 +1334,8 @@ def pass_march_to_compiler(conanobj, cmake):
 
     conanobj.output.info("Compiler flags: %s" % flags)
 
-    cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + flags
-    cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + flags
+    cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
+    cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
 
     # if conanobj.settings.compiler != "Visual Studio":
     #     gcc_march = str(conanobj.options.microarchitecture)
