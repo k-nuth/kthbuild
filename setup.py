@@ -4,13 +4,15 @@
 # Copyright (c) 2020 Fernando Pelliccioni
 # 
 
+import atexit
 from setuptools import setup
 from setuptools.command.install import install
+
 
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.24"
+__version__ = "0.0.25"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -22,11 +24,57 @@ install_requires = [
     "cpuid >= 0.0.9",
 ]
 
-class PostInstallCommand(install):
-    """Post-installation for installation mode."""
-    def run(self):
-        print('********** PostInstallCommand **********')
-        install.run(self)
+
+def exec_conan_user(default=None):
+    try:
+        # res = subprocess.Popen(["conan", "user"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        res = subprocess.Popen(["conan", "remote", "add", "kth", "https://api.bintray.com/conan/k-nuth/kth"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        output, _ = res.communicate()
+        print('fer 0')
+
+        if output:
+            print('fer 0.1')
+            if res.returncode == 0:
+                ret = output.decode("utf-8").replace('\n', '').replace('\r', '')
+                return ret
+        return default
+    except OSError: # as e:
+        print('fer 1')
+        return default
+    except:
+        print('fer 2')
+        return default
+
+# class PostDevelopCommand(develop):
+#     """Post-installation for development mode."""
+#     def run(self):
+#         print('********** PostDevelopCommand **********')
+#         exec_conan_user()
+#         print('********** PostDevelopCommand **********')
+#         develop.run(self)
+
+# class PostInstallCommand(install):
+#     """Post-installation for installation mode."""
+#     def run(self):
+#         print('********** PostInstallCommand **********')
+#         exec_conan_user()
+#         print('********** PostInstallCommand **********')
+#         install.run(self)
+
+
+def _post_install():
+    exec_conan_user()
+    print('POST INSTALL')
+
+
+class new_install(install):
+    def __init__(self, *args, **kwargs):
+        super(new_install, self).__init__(*args, **kwargs)
+        atexit.register(_post_install)
+
+
+
 
 setup(
     name = __title__,
@@ -79,10 +127,12 @@ setup(
         # 'https://testpypi.python.org/pypi/cpuid-native/',
     ],
 
-    cmdclass={
-        'install': PostInstallCommand,
-    },
+    # cmdclass={
+    #     'develop': PostDevelopCommand,
+    #     'install': PostInstallCommand,
+    # },
 
+    cmdclass={'install': new_install},
 
     # extras_require={
     #     'dev': ['check-manifest'],
