@@ -1580,6 +1580,60 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         self.info.options.cflags = "ANY"
         self.info.options.microarchitecture = "ANY"
 
+    def cmake_basis(self, pure_c=False):
+        cmake = CMake(self)
+        cmake.definitions["USE_CONAN"] = option_on_off(True)
+        cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
+        cmake.verbose = self.options.verbose
+        cmake.definitions["ENABLE_SHARED"] = option_on_off(self.is_shared)
+        cmake.definitions["ENABLE_POSITION_INDEPENDENT_CODE"] = option_on_off(self.fPIC_enabled)
+
+        # cmake.definitions["WITH_TESTS"] = option_on_off(self.options.with_tests)
+        # cmake.definitions["WITH_TESTS_NEW"] = option_on_off(self.options.with_tests)
+
+        if self.options.cxxflags != "_DUMMY_":
+            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
+        if self.options.cflags != "_DUMMY_":
+            cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
+
+        if self.settings.compiler != "Visual Studio":
+            # cmake.definitions["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
+            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
+        if self.settings.compiler == "Visual Studio":
+            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+
+        cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
+        cmake.definitions["MARCH_ID"] = self.options.march_id
+        cmake.definitions["KNUTH_PROJECT_VERSION"] = self.version
+
+        if not pure_c:
+            if self.settings.compiler == "gcc":
+                if float(str(self.settings.compiler.version)) >= 5:
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+                else:
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
+            elif self.settings.compiler == "clang":
+                if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+
+        pass_march_to_compiler(self, cmake)
+        cmake.configure(source_dir=self.source_folder)
+        # self.output.info("CONAN_CXX_FLAGS: %s" % (cmake.definitions["CONAN_CXX_FLAGS"], ))
+        # self.output.info("cmake.command_line: %s" % (cmake.command_line, ))
+        return cmake
+
+
+# --------------
+
+
+
+
+
+
+
+
+
+
     def add_reqs(self, reqs):
         for r in reqs:
             self.requires(r % (self.user, self.channel))
