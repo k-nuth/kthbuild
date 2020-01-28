@@ -1328,7 +1328,7 @@ def pass_march_to_compiler(conanobj, cmake):
     flags = get_compiler_flags_arch_id(march_id, 
                                str(conanobj.settings.os), 
                                str(conanobj.settings.compiler), 
-                               float(str(conanobj.settings.compiler.version))):
+                               float(str(conanobj.settings.compiler.version)))
 
     conanobj.output.info("Compiler flags: %s" % flags)
 
