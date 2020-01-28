@@ -1591,9 +1591,9 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         # cmake.definitions["WITH_TESTS"] = option_on_off(self.options.with_tests)
         # cmake.definitions["WITH_TESTS_NEW"] = option_on_off(self.options.with_tests)
 
-        if self.options.cxxflags != "_DUMMY_":
+        if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
-        if self.options.cflags != "_DUMMY_":
+        if self.options.get_safe("cflags") is not None and self.options.cflags != "_DUMMY_":
             cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
 
         if self.settings.compiler != "Visual Studio":
