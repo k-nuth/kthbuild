@@ -11,7 +11,7 @@ import subprocess
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.30"
+__version__ = "0.0.31"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -26,15 +26,28 @@ install_requires = [
 class PostInstallCommand(install):
     """Override Install
     """
+
+    user_options = install.user_options + [
+        ('no-remotes=', None, 'Do not add conan remotes')
+    ]
+
+    def initialize_options(self):
+        install.initialize_options(self)
+        self.no_remotes = False
+
+    def finalize_options(self):
+        print('no-remotes option: ', self.no_remotes)
+        install.finalize_options(self)
+
     def run(self):
         """If necessary, create plugin directory, install and change file owner
         :return: None
         """
         install.run(self)
-        self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
-        self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
+        if not self.no_remotes:
+            self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
+            self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
         
-
     def __setup_conan_remote(self, remote_alias, remote_url):
         try:
             # remote_alias = "kthbuild_kth_temp_"
