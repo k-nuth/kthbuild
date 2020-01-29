@@ -1344,21 +1344,28 @@ def march_close_name(march_incorrect): #, compiler, compiler_version):
 
 
 def march_conan_manip(conanobj):
+    march_id = None
+    microarchitecture = None
+
     if conanobj.settings.arch != "x86_64":
-        return
+        return (march_id, microarchitecture)
 
-    conanobj.options.microarchitecture = get_cpu_microarchitecture().replace('_', '-')
-    if conanobj.options.march_id == "_DUMMY_":
-        conanobj.options.march_id = get_architecture_id()
-        march_from = 'taken from cpuid'
-    else:
-        march_from = 'user defined'
-        #TODO(fernando): check for march_id errors
+    microarchitecture = get_cpu_microarchitecture().replace('_', '-')
+    march_id = get_architecture_id()
 
-    conanobj.options.microarchitecture = get_march(conanobj.options.microarchitecture, str(conanobj.settings.os), str(conanobj.settings.compiler), float(str(conanobj.settings.compiler.version)))
-    conanobj.output.info("Detected microarchitecture (%s): %s" % ("taken from cpuid", conanobj.options.microarchitecture))
-    conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from, conanobj.options.march_id))
+    if self.options.get_safe("march_id") is not None:
+        if conanobj.options.march_id == "_DUMMY_":
+            conanobj.options.march_id = march_id
+            march_from = 'taken from cpuid'
+        else:
+            march_from = 'user defined'
+            #TODO(fernando): check for march_id errors
 
+    microarchitecture = get_march(microarchitecture, str(conanobj.settings.os), str(conanobj.settings.compiler), float(str(conanobj.settings.compiler.version)))
+    conanobj.output.info("Detected microarchitecture (%s): %s" % ("taken from cpuid", microarchitecture))
+    conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from, march_id))
+
+    return (march_id, microarchitecture)
 
 
 def pass_march_to_compiler(conanobj, cmake):
@@ -1544,10 +1551,18 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         if self.settings.arch != "x86_64":
             return
 
-        if self.options.microarchitecture == "_DUMMY_":
+        if self.options.get_safe("microarchitecture") is not None and self.options.microarchitecture == "_DUMMY_":
             del self.options.fix_march
 
-        march_conan_manip(self)
+        march_id, microarchitecture = march_conan_manip(self)
+        self.options["*"].march_id = march_id
+        self.options["*"].microarchitecture = microarchitecture
+
+        if self.options.get_safe("march_id") is not None:
+            self.options.march_id = march_id
+
+        if self.options.get_safe("microarchitecture") is not None:
+            self.options.microarchitecture = microarchitecture
 
         self.output.info("Vendor ID: %s" % vendorID())
         self.output.info("Brand name: %s" % brandName())
@@ -1559,17 +1574,16 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         self.output.info("Logical CPU: %s" % LogicalCPU())
         self.output.info("VM: %s" % VM())
         self.output.info("Hyperthreading: %s" % Hyperthreading())
-        self.output.info("Microarchitecture: %s%s" % cpuid.cpu_microarchitecture())
-        self.output.info("Microarchitecture ID: %s" % get_architecture_id())
 
+        self.output.info("This computer microarchitecture: %s%s" % cpuid.cpu_microarchitecture())
+        self.output.info("This computer microarchitecture ID: %s" % get_architecture_id())
+        self.output.info("This computer extensions -------------------------")
         exts = get_available_extensions()
         exts_names = extensions_to_names(exts)
-
-        self.output.info("Extensions -------------------------")
         self.output.info(", ".join(exts_names))
+        #TODO(fernando): print build march_id and extensions
 
-        self.options["*"].march_id = self.options.march_id
-        self.options["*"].microarchitecture = self.options.microarchitecture
+
 
     def package_id(self):
         KnuthCxx11ABIFixer.package_id(self)
@@ -1602,8 +1616,12 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         if self.settings.compiler == "Visual Studio":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
 
-        cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
-        cmake.definitions["MARCH_ID"] = self.options.march_id
+        if self.options.get_safe("microarchitecture") is not None:
+            cmake.definitions["MICROARCHITECTURE"] = self.options.microarchitecture
+
+        if self.options.get_safe("march_id") is not None:
+            cmake.definitions["MARCH_ID"] = self.options.march_id
+
         cmake.definitions["KNUTH_PROJECT_VERSION"] = self.version
 
         if not pure_c:
