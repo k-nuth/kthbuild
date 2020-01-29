@@ -696,7 +696,19 @@ def get_user_repository(org_name, repository_name):
     # https://api.bintray.com/conan/k-nuth/kth
     return "https://api.bintray.com/conan/{0}/{1}".format(org_name.lower(), repository_name)
 
+
+def is_pull_request_appveyor():
+    return os.getenv("APPVEYOR_PULL_REQUEST_NUMBER", None) is not None
+
+def is_pull_request_travis():
+    # return os.getenv("TRAVIS_PULL_REQUEST", "false") != "false"
+    return os.getenv("TRAVIS_PULL_REQUEST", None) is not None
+
+def is_pull_request():
+    return is_pull_request_travis() or is_pull_request_appveyor()
+
 def get_conan_upload(org_name):
+    if is_pull_request(): return ''
     repository_name = get_repository()
     return os.getenv("CONAN_UPLOAD", get_user_repository(org_name, repository_name))
 
