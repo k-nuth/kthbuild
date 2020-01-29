@@ -2684,7 +2684,7 @@ def support_3dnowext():
     return d & (1 << 30) != 0
 
 #TODO(fernando): GCC muestra como "SSE prefetch"
-    # ‘athlon-tbird’
+    # athlon-tbird
     # AMD Athlon CPU with MMX, 3dNOW!, enhanced 3DNow! and SSE prefetch instructions support.
 # creo que se refiere a lo mismo
 def support_3dnowprefetch():
@@ -2786,9 +2786,9 @@ def support_avx512_os():
     # Check for OS support
     eax = cpuid.xgetbv(0)
 
-    # Verify that XCR0[7:5] = ‘111b’ (OPMASK state, upper 256-bit of ZMM0-ZMM15 and
+    # Verify that XCR0[7:5] = 111b (OPMASK state, upper 256-bit of ZMM0-ZMM15 and
     # ZMM16-ZMM31 state are enabled by OS)
-    #  and that XCR0[2:1] = ‘11b’ (XMM state and YMM state are enabled by OS).
+    #  and that XCR0[2:1] = 11b (XMM state and YMM state are enabled by OS).
     return (eax>>5)&7 == 7 and (eax>>1)&3 == 3
 
 def support_avx512f_os():
