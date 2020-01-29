@@ -2207,7 +2207,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 # -mxsave, -mno-xsave
 # -mxsavec, -mno-xsavec
 # -mxsaveopt, -mno-xsaveopt
-# -mxsaves, -mno-xsaves¶
+# -mxsaves, -mno-xsaves
 
 # ------------------------------------------------------------------------------------
 
