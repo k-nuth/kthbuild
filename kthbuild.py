@@ -1539,12 +1539,18 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             if self.options.shared and self.msvc_mt_build:
                 self.options.remove("shared")
 
+    def _warn_missing_options(self):
+        if self.settings.arch == "x86_64" and self.options.get_safe("march_id") is None:
+            self.output.info("**** The recipe does not implement the march_id option.")
+
     def configure(self, pure_c=False):
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
             raise Exception ("Conan version should be greater or equal than %s. Detected: %s." % (self.conan_req_version, conan_version))
 
         # self.output.info("libcxx: %s" % (str(self.settings.compiler.libcxx),))
         KnuthCxx11ABIFixer.configure(self, pure_c)
+
+        self._warn_missing_options()
 
         if self.settings.arch != "x86_64":
             return
