@@ -1583,7 +1583,6 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
         if self.options.get_safe("march_id") is not None:
             self.output.info("Building microarchitecture ID: %s" % march_id)
-            self.output.info("Building extensions -------------------------")
             exts = decode_extensions(march_id)
             exts_names = extensions_to_names(exts)
             self.output.info(", ".join(exts_names))
@@ -3936,6 +3935,7 @@ def encode_extensions(exts):
     return exts_num_b58
 
 def decode_extensions(architecture_id):
+    architecture_id = str(architecture_id)
     exts_num = base58_flex_decode(architecture_id)
     res = "{0:b}".format(exts_num)
     res = res.zfill(len(extensions_map))
