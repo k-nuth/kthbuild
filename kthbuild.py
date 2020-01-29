@@ -1542,7 +1542,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
     def _warn_missing_options(self):
         if self.settings.arch == "x86_64" and self.options.get_safe("march_id") is None:
-            self.output.info("**** The recipe does not implement the march_id option.")
+            self.output.warn("**** The recipe does not implement the march_id option.")
 
     def configure(self, pure_c=False):
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
