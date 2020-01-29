@@ -2024,7 +2024,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 # "MWAITX (AMD) ???"	
 # "CLZERO (AMD) ???"
 # "Extended MMX (AMD) https://en.wikipedia.org/wiki/Extended_MMX"
-# PREFETCHWT1               #TODO(fernando): ver en qué marchs se usa...
+# PREFETCHWT1               #TODO(fernando): ver en que marchs se usa...
 
 
 # ------------------------------------------------------------------------------------
@@ -2217,7 +2217,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 #TODO(fernando) ---------------------------
 # VMX               https://github.com/klauspost/cpuid/blob/master/cpuid.go#L866
 # AESNI             https://github.com/klauspost/cpuid/blob/master/cpuid.go#L878
-# PREFETCHWT1       ver en qué marchs se usa...
+# PREFETCHWT1       ver en que marchs se usa...
 
 
 
@@ -2301,7 +2301,7 @@ def support_mmx():
     _, _, _, d = cpuid.cpuid(0x00000001)
     return d & (1 << 23) != 0
 
-#TODO(fernando): la implementación de la librería de Golang creo que tiene un error, revisar y PR.
+#TODO(fernando): la implementacion de la libreria de Golang creo que tiene un error, revisar y PR.
 # def support_mmxext():
 #     # https://github.com/klauspost/cpuid/blob/master/cpuid.go#L854
 #     if max_function_id() < 0x00000001: return False
@@ -2724,7 +2724,7 @@ def support_clzero():
     _, b, _, _ = cpuid.cpuid(0x80000008)
     return (b & (1 << 0)) != 0
 
-#TODO(fernando): por las dudas chequear a ver si la implementación de Golang es correcta!
+#TODO(fernando): por las dudas chequear a ver si la implementacion de Golang es correcta!
 # "Extended MMX (AMD) https://en.wikipedia.org/wiki/Extended_MMX"
 def support_mmxext():
     if max_extended_function() < 0x80000001: return False
