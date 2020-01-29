@@ -1351,7 +1351,7 @@ def march_conan_manip(conanobj):
     march_id = get_architecture_id()
     microarchitecture = get_cpu_microarchitecture().replace('_', '-')
 
-    if self.options.get_safe("march_id") is not None:
+    if conanobj.options.get_safe("march_id") is not None:
         if conanobj.options.march_id == "_DUMMY_":
             conanobj.options.march_id = march_id
         else:
