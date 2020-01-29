@@ -2011,7 +2011,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 # BFLOAT16
 # 3DNow!
 # enhanced 3DNow!
-# "SSE prefetch??? Parece que es una versón previa, no Full de SSE"	
+# "SSE prefetch??? Parece que es una version previa, no Full de SSE"	
 # "XOP (AMD) ???"	
 # "LWP (AMD) ???"	
 # "CX16 (AMD) ???"	
