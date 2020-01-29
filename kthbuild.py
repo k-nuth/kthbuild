@@ -3946,7 +3946,8 @@ def decode_extensions(architecture_id):
     exts_num = base58_flex_decode(architecture_id)
     res = "{0:b}".format(exts_num)
     res = res.zfill(len(extensions_map))
-    return _to_ints_bin([*reversed(res)])
+    # return _to_ints_bin([*reversed(res)])
+    return _to_ints_bin(list(reversed(res))
     # return [*reversed(res)]
 
 def get_architecture_id():
