@@ -1344,20 +1344,18 @@ def march_close_name(march_incorrect): #, compiler, compiler_version):
 
 
 def march_conan_manip(conanobj):
-    march_id = None
-    microarchitecture = None
-
     if conanobj.settings.arch != "x86_64":
-        return (march_id, microarchitecture)
+        return (None, None)
 
-    microarchitecture = get_cpu_microarchitecture().replace('_', '-')
+    march_from = 'taken from cpuid'
     march_id = get_architecture_id()
+    microarchitecture = get_cpu_microarchitecture().replace('_', '-')
 
     if self.options.get_safe("march_id") is not None:
         if conanobj.options.march_id == "_DUMMY_":
             conanobj.options.march_id = march_id
-            march_from = 'taken from cpuid'
         else:
+            march_id = conanobj.options.march_id
             march_from = 'user defined'
             #TODO(fernando): check for march_id errors
 
@@ -1583,6 +1581,12 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         self.output.info(", ".join(exts_names))
         #TODO(fernando): print build march_id and extensions
 
+        if self.options.get_safe("march_id") is not None:
+            self.output.info("Building microarchitecture ID: %s" % march_id)
+            self.output.info("Building extensions -------------------------")
+            exts = decode_extensions(march_id):
+            exts_names = extensions_to_names(exts)
+            self.output.info(", ".join(exts_names))
 
 
     def package_id(self):
