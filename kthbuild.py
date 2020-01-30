@@ -329,10 +329,10 @@ def max_release_branch(default=None):
 
 
 def copy_env_vars(env_vars):
-    env_vars["KNUTH_BRANCH"] = os.getenv('KNUTH_BRANCH', '-')
-    env_vars["KNUTH_CONAN_CHANNEL"] = os.getenv('KNUTH_CONAN_CHANNEL', '-')
-    env_vars["KNUTH_FULL_BUILD"] = os.getenv('KNUTH_FULL_BUILD', '-')
-    env_vars["KNUTH_CONAN_VERSION"] = os.getenv('KNUTH_CONAN_VERSION', '-')
+    env_vars["KTH_BRANCH"] = os.getenv('KTH_BRANCH', '-')
+    env_vars["KTH_CONAN_CHANNEL"] = os.getenv('KTH_CONAN_CHANNEL', '-')
+    env_vars["KTH_FULL_BUILD"] = os.getenv('KTH_FULL_BUILD', '-')
+    env_vars["KTH_CONAN_VERSION"] = os.getenv('KTH_CONAN_VERSION', '-')
 
 def is_development_branch_internal(branch = None):
     if branch is None: 
@@ -371,29 +371,29 @@ def is_development_branch():
 
 
 # if ($Env:APPVEYOR_REPO_BRANCH -ceq "dev") {
-# +        $Env:KNUTH_CONAN_CHANNEL = "testing"
-# +        $Env:KNUTH_FULL_BUILD = 0
+# +        $Env:KTH_CONAN_CHANNEL = "testing"
+# +        $Env:KTH_FULL_BUILD = 0
 # +      }
 # +      elseif ($Env:APPVEYOR_REPO_BRANCH.StartsWith("release")) {
-# +        $Env:KNUTH_CONAN_CHANNEL = "stable"
-# +        $Env:KNUTH_FULL_BUILD = 1
+# +        $Env:KTH_CONAN_CHANNEL = "stable"
+# +        $Env:KTH_FULL_BUILD = 1
 # +      }
 # +      elseif ($Env:APPVEYOR_REPO_BRANCH.StartsWith("hotfix")) {
-# +        $Env:KNUTH_CONAN_CHANNEL = "stable"
-# +        $Env:KNUTH_FULL_BUILD = 1
+# +        $Env:KTH_CONAN_CHANNEL = "stable"
+# +        $Env:KTH_FULL_BUILD = 1
 # +      }
 # +      elseif ($Env:APPVEYOR_REPO_BRANCH.StartsWith("feature")) {
-# +        $Env:KNUTH_CONAN_CHANNEL = $Env:APPVEYOR_REPO_BRANCH
-# +        $Env:KNUTH_FULL_BUILD = 0
+# +        $Env:KTH_CONAN_CHANNEL = $Env:APPVEYOR_REPO_BRANCH
+# +        $Env:KTH_FULL_BUILD = 0
 # +      }
 # +      else {
-# +        $Env:KNUTH_CONAN_CHANNEL = "stable"
-# +        $Env:KNUTH_FULL_BUILD = 1
+# +        $Env:KTH_CONAN_CHANNEL = "stable"
+# +        $Env:KTH_FULL_BUILD = 1
 # +      }
 
 
 def get_branch():
-    branch = os.getenv("KNUTH_BRANCH", None)
+    branch = os.getenv("KTH_BRANCH", None)
     
     # print("branch: %s" % (branch,))
 
@@ -405,7 +405,7 @@ def get_branch():
     return branch
 
 # def get_branch_clean():
-#     branch = os.getenv("KNUTH_BRANCH", None)
+#     branch = os.getenv("KTH_BRANCH", None)
 #     if branch is None: 
 #         branch = get_git_branch()
 #     return branch
@@ -466,10 +466,10 @@ def get_version_from_file_no_recipe_dir():
 
 def get_version_no_recipe_dir():
     # print("get_version()----------------------------------------------------------")
-    # print("KNUTH_BRANCH:        %s" % (os.getenv("KNUTH_BRANCH", None),))
-    # print("KNUTH_CONAN_CHANNEL: %s" % (os.getenv("KNUTH_CONAN_CHANNEL", None),))
-    # print("KNUTH_FULL_BUILD:    %s" % (os.getenv("KNUTH_FULL_BUILD", None),))
-    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+    # print("KTH_BRANCH:        %s" % (os.getenv("KTH_BRANCH", None),))
+    # print("KTH_CONAN_CHANNEL: %s" % (os.getenv("KTH_CONAN_CHANNEL", None),))
+    # print("KTH_FULL_BUILD:    %s" % (os.getenv("KTH_FULL_BUILD", None),))
+    # print("KTH_CONAN_VERSION: %s" % (os.getenv("KTH_CONAN_VERSION", None),))
 
     version = get_version_from_file_no_recipe_dir()
 
@@ -477,10 +477,10 @@ def get_version_no_recipe_dir():
     # print("version 1: %s" % (version,))
 
     if version is None:
-        version = os.getenv("KNUTH_CONAN_VERSION", None)
+        version = os.getenv("KTH_CONAN_VERSION", None)
 
     # print("version 2: %s" % (version,))
-    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+    # print("KTH_CONAN_VERSION: %s" % (os.getenv("KTH_CONAN_VERSION", None),))
 
     if version is None:
         version = get_version_from_branch_name()
@@ -497,10 +497,10 @@ def get_version_no_recipe_dir():
 
 def get_version(recipe_dir):
     # print("get_version()----------------------------------------------------------")
-    # print("KNUTH_BRANCH:        %s" % (os.getenv("KNUTH_BRANCH", None),))
-    # print("KNUTH_CONAN_CHANNEL: %s" % (os.getenv("KNUTH_CONAN_CHANNEL", None),))
-    # print("KNUTH_FULL_BUILD:    %s" % (os.getenv("KNUTH_FULL_BUILD", None),))
-    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+    # print("KTH_BRANCH:        %s" % (os.getenv("KTH_BRANCH", None),))
+    # print("KTH_CONAN_CHANNEL: %s" % (os.getenv("KTH_CONAN_CHANNEL", None),))
+    # print("KTH_FULL_BUILD:    %s" % (os.getenv("KTH_FULL_BUILD", None),))
+    # print("KTH_CONAN_VERSION: %s" % (os.getenv("KTH_CONAN_VERSION", None),))
 
     version = get_version_from_file(recipe_dir)
 
@@ -508,10 +508,10 @@ def get_version(recipe_dir):
     # print("version 1: %s" % (version,))
 
     if version is None:
-        version = os.getenv("KNUTH_CONAN_VERSION", None)
+        version = os.getenv("KTH_CONAN_VERSION", None)
 
     # print("version 2: %s" % (version,))
-    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+    # print("KTH_CONAN_VERSION: %s" % (os.getenv("KTH_CONAN_VERSION", None),))
 
     if version is None:
         version = get_version_from_branch_name()
@@ -528,10 +528,10 @@ def get_version(recipe_dir):
 
 def get_version_no_releases(recipe_dir, default=None):
     # print("get_version()----------------------------------------------------------")
-    # print("KNUTH_BRANCH:        %s" % (os.getenv("KNUTH_BRANCH", None),))
-    # print("KNUTH_CONAN_CHANNEL: %s" % (os.getenv("KNUTH_CONAN_CHANNEL", None),))
-    # print("KNUTH_FULL_BUILD:    %s" % (os.getenv("KNUTH_FULL_BUILD", None),))
-    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+    # print("KTH_BRANCH:        %s" % (os.getenv("KTH_BRANCH", None),))
+    # print("KTH_CONAN_CHANNEL: %s" % (os.getenv("KTH_CONAN_CHANNEL", None),))
+    # print("KTH_FULL_BUILD:    %s" % (os.getenv("KTH_FULL_BUILD", None),))
+    # print("KTH_CONAN_VERSION: %s" % (os.getenv("KTH_CONAN_VERSION", None),))
 
     version = get_version_from_file(recipe_dir)
 
@@ -539,10 +539,10 @@ def get_version_no_releases(recipe_dir, default=None):
     # print("version 1: %s" % (version,))
 
     if version is None:
-        version = os.getenv("KNUTH_CONAN_VERSION", None)
+        version = os.getenv("KTH_CONAN_VERSION", None)
 
     # print("version 2: %s" % (version,))
-    # print("KNUTH_CONAN_VERSION: %s" % (os.getenv("KNUTH_CONAN_VERSION", None),))
+    # print("KTH_CONAN_VERSION: %s" % (os.getenv("KTH_CONAN_VERSION", None),))
 
     if version is None:
         version = get_version_from_branch_name()
@@ -566,7 +566,7 @@ def get_version_no_releases(recipe_dir, default=None):
 #     version = get_version_from_file()
 
 #     if version is None:
-#         version = os.getenv("KNUTH_CONAN_VERSION", None)
+#         version = os.getenv("KTH_CONAN_VERSION", None)
 
 #     if version is None:
 #         version = get_version_from_branch_name_clean()
@@ -606,7 +606,7 @@ def get_channel_no_recipe_dir():
     channel = get_channel_from_file_no_recipe_dir()
 
     if channel is None:
-        channel = os.getenv("KNUTH_CONAN_CHANNEL", None)
+        channel = os.getenv("KTH_CONAN_CHANNEL", None)
 
     if channel is None:
         # channel = get_git_branch()
@@ -621,7 +621,7 @@ def get_channel(recipe_dir):
     channel = get_channel_from_file(recipe_dir)
 
     if channel is None:
-        channel = os.getenv("KNUTH_CONAN_CHANNEL", None)
+        channel = os.getenv("KTH_CONAN_CHANNEL", None)
 
     if channel is None:
         channel = get_channel_from_branch()
@@ -1644,7 +1644,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         if self.options.get_safe("march_id") is not None:
             cmake.definitions["MARCH_ID"] = self.options.march_id
 
-        cmake.definitions["KNUTH_PROJECT_VERSION"] = self.version
+        cmake.definitions["KTH_PROJECT_VERSION"] = self.version
 
         if not pure_c:
             if self.settings.compiler == "gcc":

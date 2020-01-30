@@ -12,7 +12,7 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.56"
+__version__ = "0.0.57"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -54,7 +54,7 @@ def running_in_cpt_context():
     # -e CONAN_UPLOAD="https://api.bintray.com/conan/k-nuth/kth@True@upload_repo" 
     # -e CONAN_REMOTES="https://api.bintray.com/conan/k-nuth/kth@True@upload_repo,https://api.bintray.com/conan/bitprim/bitprim@True@remote1" 
     # -e CONAN_REFERENCE="kth-infrastructure/0.6.0@kth/feature-ci-marchs" 
-    # -e CPT_PROFILE="@@include(default)@@@@[settings]@@arch=x86_64@@build_type=Release@@compiler=gcc@@compiler.version=9@@[options]@@kth-infrastructure:shared=False@@kth-infrastructure:march_id=4fZKi37a595hP@@kth-infrastructure:with_tests=False@@kth-infrastructure:with_examples=False@@[env]@@KNUTH_BRANCH=feature-ci-marchs@@KNUTH_CONAN_CHANNEL=feature-ci-marchs@@KNUTH_FULL_BUILD=0@@KNUTH_CONAN_VERSION=0.6.0@@[build_requires]@@@@" 
+    # -e CPT_PROFILE="@@include(default)@@@@[settings]@@arch=x86_64@@build_type=Release@@compiler=gcc@@compiler.version=9@@[options]@@kth-infrastructure:shared=False@@kth-infrastructure:march_id=4fZKi37a595hP@@kth-infrastructure:with_tests=False@@kth-infrastructure:with_examples=False@@[env]@@KTH_BRANCH=feature-ci-marchs@@KTH_CONAN_CHANNEL=feature-ci-marchs@@KTH_FULL_BUILD=0@@KTH_CONAN_VERSION=0.6.0@@[build_requires]@@@@" 
     return (os.getenv("CONAN_UPLOAD", None) != None or
            os.getenv("CONAN_REMOTES", None) != None or     
            os.getenv("CONAN_REFERENCE", None) != None or     
