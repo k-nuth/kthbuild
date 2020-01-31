@@ -708,7 +708,7 @@ def is_pull_request():
     return is_pull_request_travis() or is_pull_request_appveyor()
 
 def get_conan_upload(org_name):
-    if is_pull_request(): return ''
+    # if is_pull_request(): return ''
     repository_name = get_repository()
     return os.getenv("CONAN_UPLOAD", get_user_repository(org_name, repository_name))
 
