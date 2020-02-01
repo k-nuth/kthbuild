@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # 
-# Copyright (c) 2020 Fernando Pelliccioni
+# Copyright (c) 2019-2020 Knuth Project
 # 
 
 from setuptools import setup
@@ -12,43 +12,17 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.59"
+__version__ = "0.0.60"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
-__copyright__ = "Copyright (c) 2020 Fernando Pelliccioni"
+__copyright__ = "Copyright (c) 2019-2020 Knuth Project"
 
 
 install_requires = [
     "conan >= 1.21.1",
     "cpuid >= 0.0.9",
 ]
-
-# class PostInstallCommand(install):
-#     """Override Install
-#     """
-
-#     user_options = install.user_options + [
-#         ('no-remotes=', None, 'Do not add conan remotes')
-#     ]
-
-#     def initialize_options(self):
-#         install.initialize_options(self)
-#         self.no_remotes = False
-
-#     def finalize_options(self):
-#         print('no-remotes option: ', self.no_remotes)
-#         install.finalize_options(self)
-
-#     def run(self):
-#         """If necessary, create plugin directory, install and change file owner
-#         :return: None
-#         """
-#         install.run(self)
-#         if not self.no_remotes:
-#             self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
-#             self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
-        
 
 def running_in_cpt_context():
     # -e CONAN_UPLOAD="https://api.bintray.com/conan/k-nuth/kth@True@upload_repo" 

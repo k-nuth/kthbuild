@@ -1,4 +1,4 @@
-|travis| |appveyor|
+|travis|
 
 kthbuild
 =========
@@ -22,8 +22,5 @@ Development version:
 
 .. |travis| image:: https://travis-ci.org/k-nuth/kthbuild.svg?branch=master
  		   :target: https://travis-ci.org/k-nuth/kthbuild
- 		   
-.. |appveyor| image:: https://ci.appveyor.com/api/projects/status/github/k-nuth/kthbuild?branch=master&svg=true
-  		     :target: https://ci.appveyor.com/project/k-nuth/kthbuild?branch=master
 
 
