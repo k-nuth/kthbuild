@@ -1563,48 +1563,50 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         # self.output.info("libcxx: %s" % (str(self.settings.compiler.libcxx),))
         KnuthCxx11ABIFixer.configure(self, pure_c)
 
+        if self.options.get_safe("currency") is not None:
+            self.options["*"].currency = self.options.currency
+            self.output.info("Compiling for currency: %s" % (self.options.currency,))
+
         self._warn_missing_options()
 
-        if self.settings.arch != "x86_64":
-            return
+        if self.settings.arch == "x86_64":
+            if self.options.get_safe("microarchitecture") is not None and self.options.microarchitecture == "_DUMMY_":
+                del self.options.fix_march
 
-        if self.options.get_safe("microarchitecture") is not None and self.options.microarchitecture == "_DUMMY_":
-            del self.options.fix_march
+            march_id, microarchitecture = march_conan_manip(self)
+            self.options["*"].march_id = march_id
+            self.options["*"].microarchitecture = microarchitecture
 
-        march_id, microarchitecture = march_conan_manip(self)
-        self.options["*"].march_id = march_id
-        self.options["*"].microarchitecture = microarchitecture
+            if self.options.get_safe("march_id") is not None:
+                self.options.march_id = march_id
 
-        if self.options.get_safe("march_id") is not None:
-            self.options.march_id = march_id
+            if self.options.get_safe("microarchitecture") is not None:
+                self.options.microarchitecture = microarchitecture
 
-        if self.options.get_safe("microarchitecture") is not None:
-            self.options.microarchitecture = microarchitecture
+            self.output.info("Vendor ID: %s" % vendorID())
+            self.output.info("Brand name: %s" % brandName())
+            self.output.info("Cache line: %s" % cacheLine())
+            self.output.info("Family model: %s, %s" % familyModel())
+            self.output.info("Threads per core: %s" % threadsPerCore())
+            self.output.info("Logical cores: %s" % logicalCores())
+            self.output.info("Physical cores: %s" % physicalCores())
+            self.output.info("Logical CPU: %s" % LogicalCPU())
+            self.output.info("VM: %s" % VM())
+            self.output.info("Hyperthreading: %s" % Hyperthreading())
 
-        self.output.info("Vendor ID: %s" % vendorID())
-        self.output.info("Brand name: %s" % brandName())
-        self.output.info("Cache line: %s" % cacheLine())
-        self.output.info("Family model: %s, %s" % familyModel())
-        self.output.info("Threads per core: %s" % threadsPerCore())
-        self.output.info("Logical cores: %s" % logicalCores())
-        self.output.info("Physical cores: %s" % physicalCores())
-        self.output.info("Logical CPU: %s" % LogicalCPU())
-        self.output.info("VM: %s" % VM())
-        self.output.info("Hyperthreading: %s" % Hyperthreading())
-
-        self.output.info("This computer microarchitecture: %s%s" % cpuid.cpu_microarchitecture())
-        self.output.info("This computer microarchitecture ID: %s" % get_architecture_id())
-        self.output.info("This computer extensions -------------------------")
-        exts = get_available_extensions()
-        exts_names = extensions_to_names(exts)
-        self.output.info(", ".join(exts_names))
-        #TODO(fernando): print build march_id and extensions
-
-        if self.options.get_safe("march_id") is not None:
-            self.output.info("Building microarchitecture ID: %s" % march_id)
-            exts = decode_extensions(march_id)
+            self.output.info("This computer microarchitecture: %s%s" % cpuid.cpu_microarchitecture())
+            self.output.info("This computer microarchitecture ID: %s" % get_architecture_id())
+            self.output.info("This computer extensions -------------------------")
+            exts = get_available_extensions()
             exts_names = extensions_to_names(exts)
             self.output.info(", ".join(exts_names))
+            #TODO(fernando): print build march_id and extensions
+
+            if self.options.get_safe("march_id") is not None:
+                self.output.info("Building microarchitecture ID: %s" % march_id)
+                exts = decode_extensions(march_id)
+                exts_names = extensions_to_names(exts)
+                self.output.info(", ".join(exts_names))
 
 
     def package_id(self):
@@ -1615,6 +1617,11 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         self.info.options.cxxflags = "ANY"
         self.info.options.cflags = "ANY"
         self.info.options.microarchitecture = "ANY"
+        self.info.options.tests = "ANY"
+        self.info.options.examples = "ANY"
+        self.info.options.cmake_export_compile_commands = "ANY"
+
+
 
     def cmake_basis(self, pure_c=False):
         cmake = CMake(self)
@@ -1624,8 +1631,12 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         cmake.definitions["ENABLE_SHARED"] = option_on_off(self.is_shared)
         cmake.definitions["ENABLE_POSITION_INDEPENDENT_CODE"] = option_on_off(self.fPIC_enabled)
 
-        # cmake.definitions["WITH_TESTS"] = option_on_off(self.options.with_tests)
-        # cmake.definitions["WITH_TESTS_NEW"] = option_on_off(self.options.with_tests)
+        if self.options.get_safe("tests") is not None:
+            cmake.definitions["WITH_TESTS"] = option_on_off(self.options.tests)
+            cmake.definitions["WITH_TESTS_NEW"] = option_on_off(self.options.tests)
+
+        if self.options.get_safe("examples") is not None:
+            cmake.definitions["WITH_EXAMPLES"] = option_on_off(self.options.examples)
 
         if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
@@ -1645,6 +1656,12 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             cmake.definitions["MARCH_ID"] = self.options.march_id
 
         cmake.definitions["KTH_PROJECT_VERSION"] = self.version
+
+        if self.options.get_safe("currency") is not None:
+            cmake.definitions["CURRENCY"] = self.options.currency
+
+        if self.options.cmake_export_compile_commands:
+            cmake.definitions["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
 
         if not pure_c:
             if self.settings.compiler == "gcc":
