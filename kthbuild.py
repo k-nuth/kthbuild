@@ -1660,7 +1660,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         if self.options.get_safe("currency") is not None:
             cmake.definitions["CURRENCY"] = self.options.currency
 
-        if self.options.cmake_export_compile_commands:
+        if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
             cmake.definitions["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
 
         if not pure_c:
