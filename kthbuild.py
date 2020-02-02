@@ -1356,20 +1356,36 @@ def march_close_name(march_incorrect): #, compiler, compiler_version):
 
 
 def march_conan_manip(conanobj):
+    # conanobj.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
+    conanobj.output.info("march_conan_manip 1")
     if conanobj.settings.arch != "x86_64":
         return (None, None)
+
+    conanobj.output.info("march_conan_manip 2")
 
     march_from = 'taken from cpuid'
     march_id = get_architecture_id()
     microarchitecture = get_cpu_microarchitecture().replace('_', '-')
 
+    conanobj.output.info("march_conan_manip 3")
+
     if conanobj.options.get_safe("march_id") is not None:
+        conanobj.output.info("march_conan_manip 4")
+
+        conanobj.output.info("conanobj.options.march_id: %s" % (conanobj.options.march_id,))
+
         if conanobj.options.march_id == "_DUMMY_":
+            conanobj.output.info("march_conan_manip 5")
+
             conanobj.options.march_id = march_id
         else:
+            conanobj.output.info("march_conan_manip 6")
+
             march_id = conanobj.options.march_id
             march_from = 'user defined'
             #TODO(fernando): check for march_id errors
+
+    conanobj.output.info("march_conan_manip 7")
 
     microarchitecture = get_march(microarchitecture, str(conanobj.settings.os), str(conanobj.settings.compiler), float(str(conanobj.settings.compiler.version)))
     conanobj.output.info("Detected microarchitecture (%s): %s" % ("taken from cpuid", microarchitecture))
