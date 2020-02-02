@@ -1574,14 +1574,18 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
                 del self.options.fix_march
 
             march_id, microarchitecture = march_conan_manip(self)
+            self.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
             self.options["*"].march_id = march_id
             self.options["*"].microarchitecture = microarchitecture
+            self.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
 
             if self.options.get_safe("march_id") is not None:
                 self.options.march_id = march_id
 
             if self.options.get_safe("microarchitecture") is not None:
                 self.options.microarchitecture = microarchitecture
+
+            self.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
 
             self.output.info("Vendor ID: %s" % vendorID())
             self.output.info("Brand name: %s" % brandName())
