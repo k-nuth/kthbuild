@@ -1570,7 +1570,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
     def _warn_missing_options(self):
         if self.settings.arch == "x86_64" and self.options.get_safe("march_id") is None:
-            self.output.warn("**** The recipe does not implement the march_id option.")
+            self.output.warn("**** The recipe does not implement the march_id option. ****")
 
     def configure(self, pure_c=False):
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
@@ -1590,8 +1590,8 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
-            if self.options.get_safe("microarchitecture") is not None and self.options.microarchitecture == "_DUMMY_":
-                del self.options.fix_march
+            # if self.options.get_safe("microarchitecture") is not None and self.options.microarchitecture == "_DUMMY_":
+            #     del self.options.fix_march
 
             march_id, microarchitecture = march_conan_manip(self)
             self.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
@@ -1645,6 +1645,27 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         # self.info.options.examples = "ANY"
         # self.info.options.cmake_export_compile_commands = "ANY"
 
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+
+        # self.output.warn(self.info.options)
+        # self.output.warn(self.options.get_safe("verbose"))
+        # self.output.warn(self.options.get_safe("fix_march"))
+        # self.output.warn(self.options.get_safe("cxxflags"))
+        # self.output.warn(self.options.get_safe("cflags"))
+        # self.output.warn(self.options.get_safe("microarchitecture"))
+        # self.output.warn(self.options.get_safe("tests"))
+        # self.output.warn(self.options.get_safe("tools"))
+        # self.output.warn(self.options.get_safe("examples"))
+        # self.output.warn(self.options.get_safe("cmake_export_compile_commands"))
+
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+
         if self.options.get_safe("verbose") is not None:
             self.info.options.verbose = "ANY"
 
@@ -1671,6 +1692,14 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
         if self.options.get_safe("cmake_export_compile_commands") is not None:
             self.info.options.cmake_export_compile_commands = "ANY"
+
+
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+        # self.output.warn("-----------------------------------------------------------------")
+
+        # self.output.warn(self.info.options)
 
     def _cmake_database(self):
         if self.options.get_safe("db") is None:
