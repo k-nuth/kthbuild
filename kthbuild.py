@@ -1642,6 +1642,61 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         self.info.options.cmake_export_compile_commands = "ANY"
 
 
+    def _cmake_database(self):
+        if self.options.get_safe("db") is None:
+            return
+
+        if self.options.db == "legacy":
+            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            cmake.definitions["DB_SPENDS"] = option_on_off(False)
+            cmake.definitions["DB_HISTORY"] = option_on_off(False)
+            cmake.definitions["DB_STEALTH"] = option_on_off(False)
+            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(True)
+            cmake.definitions["DB_LEGACY"] = option_on_off(True)
+            cmake.definitions["DB_NEW"] = option_on_off(False)
+            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
+            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "legacy_full":
+            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(True)
+            cmake.definitions["DB_SPENDS"] = option_on_off(True)
+            cmake.definitions["DB_HISTORY"] = option_on_off(True)
+            cmake.definitions["DB_STEALTH"] = option_on_off(True)
+            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(True)
+            cmake.definitions["DB_LEGACY"] = option_on_off(True)
+            cmake.definitions["DB_NEW"] = option_on_off(False)
+            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
+            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "pruned":
+            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            cmake.definitions["DB_SPENDS"] = option_on_off(False)
+            cmake.definitions["DB_HISTORY"] = option_on_off(False)
+            cmake.definitions["DB_STEALTH"] = option_on_off(False)
+            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(False)
+            cmake.definitions["DB_LEGACY"] = option_on_off(False)
+            cmake.definitions["DB_NEW"] = option_on_off(True)
+            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
+            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "default":
+            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            cmake.definitions["DB_SPENDS"] = option_on_off(False)
+            cmake.definitions["DB_HISTORY"] = option_on_off(False)
+            cmake.definitions["DB_STEALTH"] = option_on_off(False)
+            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(False)
+            cmake.definitions["DB_LEGACY"] = option_on_off(False)
+            cmake.definitions["DB_NEW"] = option_on_off(True)
+            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(True)
+            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "full":
+            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            cmake.definitions["DB_SPENDS"] = option_on_off(False)
+            cmake.definitions["DB_HISTORY"] = option_on_off(False)
+            cmake.definitions["DB_STEALTH"] = option_on_off(False)
+            cmake.definitions["DB_UNSPENT_LIBBITCOIN"] = option_on_off(False)
+            cmake.definitions["DB_LEGACY"] = option_on_off(False)
+            cmake.definitions["DB_NEW"] = option_on_off(True)
+            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
+            cmake.definitions["DB_NEW_FULL"] = option_on_off(True)        
+
 
     def cmake_basis(self, pure_c=False):
         cmake = CMake(self)
@@ -1679,6 +1734,10 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
         if self.options.get_safe("currency") is not None:
             cmake.definitions["CURRENCY"] = self.options.currency
+
+
+        self._cmake_database()
+
 
         if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
             cmake.definitions["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
