@@ -1583,6 +1583,10 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             self.options["*"].currency = self.options.currency
             self.output.info("Compiling for currency: %s" % (self.options.currency,))
 
+        if self.options.get_safe("db") is not None:
+            self.options["*"].db = self.options.db
+            self.output.info("Compiling for DB: %s" % (self.options.db,))
+        
         self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
