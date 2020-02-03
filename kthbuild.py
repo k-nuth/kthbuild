@@ -1655,8 +1655,8 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         if self.options.get_safe("tests") is not None:
             self.info.options.tests = "ANY"
 
-        if self.options.get_safe("tools") is not None:
-            self.info.options.tools = "ANY"
+        # if self.options.get_safe("tools") is not None:
+        #     self.info.options.tools = "ANY"
 
         if self.options.get_safe("examples") is not None:
             self.info.options.examples = "ANY"
@@ -1735,8 +1735,8 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         if self.options.get_safe("examples") is not None:
             cmake.definitions["WITH_EXAMPLES"] = option_on_off(self.options.examples)
 
-        if self.options.get_safe("tools") is not None:
-            cmake.definitions["WITH_TOOLS"] = option_on_off(self.options.tools)
+        # if self.options.get_safe("tools") is not None:
+        #     cmake.definitions["WITH_TOOLS"] = option_on_off(self.options.tools)
 
         if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
