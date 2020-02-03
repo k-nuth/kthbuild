@@ -1583,6 +1583,12 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             self.options["*"].currency = self.options.currency
             self.output.info("Compiling for currency: %s" % (self.options.currency,))
 
+
+        if self.options.get_safe("db") is not None:
+            self.options["*"].db = self.options.db
+            self.output.info("Compiling for DB: %s" % (self.options.db,))
+
+
         self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
@@ -1638,6 +1644,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         self.info.options.cflags = "ANY"
         self.info.options.microarchitecture = "ANY"
         self.info.options.tests = "ANY"
+        self.info.options.tools = "ANY"
         self.info.options.examples = "ANY"
         self.info.options.cmake_export_compile_commands = "ANY"
 
@@ -1711,6 +1718,9 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
         if self.options.get_safe("examples") is not None:
             cmake.definitions["WITH_EXAMPLES"] = option_on_off(self.options.examples)
+
+        if self.options.get_safe("tools") is not None:
+            cmake.definitions["WITH_TOOLS"] = option_on_off(self.options.tools)
 
         if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
