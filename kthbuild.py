@@ -1583,11 +1583,6 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             self.options["*"].currency = self.options.currency
             self.output.info("Compiling for currency: %s" % (self.options.currency,))
 
-        # if self.options.get_safe("db") is not None:
-        #     self.options["*"].db = self.options.db
-        #     self.output.info("Compiling for DB: %s" % (self.options.db,))
-
-
         self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
@@ -1637,32 +1632,14 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
     def package_id(self):
         KnuthCxx11ABIFixer.package_id(self)
 
-        if self.options.get_safe("verbose") is not None:
-            self.info.options.verbose = "ANY"
-
-        if self.options.get_safe("fix_march") is not None:
-            self.info.options.fix_march = "ANY"
-    
-        if self.options.get_safe("cxxflags") is not None:
-            self.info.options.cxxflags = "ANY"
-
-        if self.options.get_safe("cflags") is not None:
-            self.info.options.cflags = "ANY"
-
-        if self.options.get_safe("microarchitecture") is not None:
-            self.info.options.microarchitecture = "ANY"
-    
-        if self.options.get_safe("tests") is not None:
-            self.info.options.tests = "ANY"
-
-        # if self.options.get_safe("tools") is not None:
-        #     self.info.options.tools = "ANY"
-
-        if self.options.get_safe("examples") is not None:
-            self.info.options.examples = "ANY"
-
-        if self.options.get_safe("cmake_export_compile_commands") is not None:
-            self.info.options.cmake_export_compile_commands = "ANY"
+        self.info.options.verbose = "ANY"
+        self.info.options.fix_march = "ANY"
+        self.info.options.cxxflags = "ANY"
+        self.info.options.cflags = "ANY"
+        self.info.options.microarchitecture = "ANY"
+        self.info.options.tests = "ANY"
+        self.info.options.examples = "ANY"
+        self.info.options.cmake_export_compile_commands = "ANY"
 
 
     def _cmake_database(self):
@@ -1734,9 +1711,6 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
         if self.options.get_safe("examples") is not None:
             cmake.definitions["WITH_EXAMPLES"] = option_on_off(self.options.examples)
-
-        # if self.options.get_safe("tools") is not None:
-        #     cmake.definitions["WITH_TOOLS"] = option_on_off(self.options.tools)
 
         if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
@@ -4534,4 +4508,3 @@ intel_marchs = {
 # #                                                        X        X              X  X                    X  X                                                                                                                          X  X                 
 # # haswell xls [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 # # calculated  [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
