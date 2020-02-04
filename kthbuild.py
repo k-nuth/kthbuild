@@ -1865,7 +1865,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
     @property
     def is_shared(self):
         if self.options.get_safe("shared") is None: 
-            return false
+            return False
 
         if self.options.shared and self.msvc_mt_build:
             return False
