@@ -1848,10 +1848,13 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
     @property
     def fPIC_enabled(self):
+        if self.options.get_safe("fPIC") is None: 
+            return False
+
         if self.settings.compiler == "Visual Studio":
             return False
-        else:
-            return self.options.fPIC
+
+        return self.options.fPIC
 
     # Version Node-Cint
     # @property
