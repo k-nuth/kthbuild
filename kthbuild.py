@@ -1701,7 +1701,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
         # self.output.warn(self.info.options)
 
-    def _cmake_database(self):
+    def _cmake_database(self, cmake):
         if self.options.get_safe("db") is None:
             return
 
@@ -1796,9 +1796,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
         if self.options.get_safe("currency") is not None:
             cmake.definitions["CURRENCY"] = self.options.currency
 
-
-        self._cmake_database()
-
+        self._cmake_database(cmake)
 
         if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
             cmake.definitions["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
