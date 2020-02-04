@@ -1565,7 +1565,7 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
         if self.settings.compiler == "Visual Studio":
             self.options.remove("fPIC")
-            if self.options.shared and self.msvc_mt_build:
+            if self.is_shared:
                 self.options.remove("shared")
 
     def _warn_missing_options(self):
@@ -1864,6 +1864,9 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
 
     @property
     def is_shared(self):
+        if self.options.get_safe("shared") is None: 
+            return false
+
         if self.options.shared and self.msvc_mt_build:
             return False
         else:
