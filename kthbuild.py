@@ -308,25 +308,18 @@ def max_release_branch(default=None):
 
     return (max, max_str)
 
-
-
 # def get_version_from_git_describe_clean(default=None, increment_minor=False):
 #     describe = get_git_describe()
-    
 #     if describe is None:
 #         return None
 #     version = describe.split('-')[0][1:]
-
 #     if increment_minor:
 #         version_arr = version.split('.')
 #         if len(version_arr) != 3:
 #             # print('version has to be of the following format: xx.xx.xx')
 #             return None
-
 #         version = "%s.%s.%s" % (version_arr[0], str(int(version_arr[1]) + 1), version_arr[2])
-
 #     return version
-
 
 def copy_env_vars(env_vars):
     env_vars["KTH_BRANCH"] = os.getenv('KTH_BRANCH', '-')
@@ -412,34 +405,24 @@ def get_branch():
 
 def get_version_from_branch_name():
     branch = get_branch()
-
     # print("get_version_from_branch_name - branch: %s" % (branch,))
-
     if branch is None: 
         return None
-
     if branch.startswith("release-") or branch.startswith("hotfix-"):
         return branch.split('-', 1)[1]
-
     if branch.startswith("release_") or branch.startswith("hotfix_"):
         return branch.split('_', 1)[1]
-
     return None
 
 # def get_version_from_branch_name_clean():
 #     branch = get_branch_clean()
-
 #     if branch is None: 
 #         return None
-
 #     if branch.startswith("release-") or branch.startswith("hotfix-"):
 #         return branch.split('-', 1)[1]
-
 #     if branch.startswith("release_") or branch.startswith("hotfix_"):
 #         return branch.split('_', 1)[1]
-
 #     return None
-
 
 def option_on_off(option):
     return "ON" if option else "OFF"
@@ -639,7 +622,7 @@ def get_user_no_recipe_dir():
 
 
 def get_repository():
-    return os.getenv("BIPRIM_BINTRAY_REPOSITORY", DEFAULT_REPOSITORY)
+    return os.getenv("KTH_BINTRAY_REPOSITORY", DEFAULT_REPOSITORY)
 
 
 
