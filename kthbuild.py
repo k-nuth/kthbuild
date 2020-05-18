@@ -703,7 +703,7 @@ def get_conan_remotes(org_name):
     #           'https://api.bintray.com/conan/bitprim/bitprim']
 
     remotes = [get_conan_upload_for_remote(org_name),
-              'https://api.bintray.com/conan/bitprim/bitprim']
+              'https://api.bintray.com/conan/tao-cpp/tao']
 
     # # Add bincrafters repository for other users, e.g. if the package would
     # # require other packages from the bincrafters repo.

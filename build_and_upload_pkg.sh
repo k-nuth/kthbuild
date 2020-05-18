@@ -4,7 +4,7 @@
 # ---------------------------------------------------
 
 sudo ./reset.sh
-# conan remote add bitprim_temp https://api.bintray.com/conan/bitprim/bitprim
+# conan remote add tap_temp https://api.bintray.com/conan/tao-cpp/tao
 # sudo conan install .
 sudo pip install -v -e .
 
