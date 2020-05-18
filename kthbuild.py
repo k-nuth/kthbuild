@@ -620,11 +620,8 @@ def get_user(recipe_dir):
 def get_user_no_recipe_dir():
     return get_content_default('conan_user', DEFAULT_USERNAME)
 
-
 def get_repository():
     return os.getenv("KTH_BINTRAY_REPOSITORY", DEFAULT_REPOSITORY)
-
-
 
 
 def get_content_with_dir(dir, file_name):

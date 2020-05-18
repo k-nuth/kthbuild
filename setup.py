@@ -12,7 +12,7 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.78"
+__version__ = "0.0.79"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -20,7 +20,7 @@ __copyright__ = "Copyright (c) 2019-2020 Knuth Project"
 
 
 install_requires = [
-    "conan >= 1.25.0",
+    "conan >= 1.25.1",
     # "conan >= 1.21.1",
     "cpuid >= 0.0.9",
 ]
@@ -42,8 +42,8 @@ class PostInstallCommand(install):
         install.run(self)
         if not running_in_cpt_context():
             self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
-            self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
-
+            self.__setup_conan_remote("kthbuild_tao_temp_",     'https://api.bintray.com/conan/tao-cpp/tao')
+            # self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
 
     def __setup_conan_remote(self, remote_alias, remote_url):
         try:
