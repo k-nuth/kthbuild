@@ -1336,36 +1336,20 @@ def march_close_name(march_incorrect): #, compiler, compiler_version):
 
 
 def march_conan_manip(conanobj):
-    # conanobj.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
-    conanobj.output.info("march_conan_manip 1")
     if conanobj.settings.arch != "x86_64":
         return (None, None)
-
-    conanobj.output.info("march_conan_manip 2")
 
     march_from = 'taken from cpuid'
     march_id = get_architecture_id()
     microarchitecture = get_cpu_microarchitecture().replace('_', '-')
 
-    conanobj.output.info("march_conan_manip 3")
-
     if conanobj.options.get_safe("march_id") is not None:
-        conanobj.output.info("march_conan_manip 4")
-
-        conanobj.output.info("conanobj.options.march_id: %s" % (conanobj.options.march_id,))
-
         if conanobj.options.march_id == "_DUMMY_":
-            conanobj.output.info("march_conan_manip 5")
-
             conanobj.options.march_id = march_id
         else:
-            conanobj.output.info("march_conan_manip 6")
-
             march_id = conanobj.options.march_id
             march_from = 'user defined'
             #TODO(fernando): check for march_id errors
-
-    conanobj.output.info("march_conan_manip 7")
 
     microarchitecture = get_march(microarchitecture, str(conanobj.settings.os), str(conanobj.settings.compiler), float(str(conanobj.settings.compiler.version)))
     conanobj.output.info("Detected microarchitecture (%s): %s" % ("taken from cpuid", microarchitecture))
@@ -1465,7 +1449,7 @@ class KnuthCxx11ABIFixer(ConanFile):
     def configure(self, pure_c=False):
         ConanFile.configure(self)
 
-        self.output.info("configure() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
+        # self.output.info("configure() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
 
         if pure_c:
             del self.settings.compiler.libcxx               #Pure-C Library
@@ -1499,11 +1483,11 @@ class KnuthCxx11ABIFixer(ConanFile):
             return
 
         abi_support = glibcxx_supports_cxx11_abi()
-        self.output.info("glibcxx_supports_cxx11_abi(): %s" % (abi_support,))
+        # self.output.info("glibcxx_supports_cxx11_abi(): %s" % (abi_support,))
         
         self.options.glibcxx_supports_cxx11_abi = abi_support
         self.options["*"].glibcxx_supports_cxx11_abi = self.options.glibcxx_supports_cxx11_abi
-        self.output.info("configure() - 2 - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
+        # self.output.info("configure() - 2 - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
         self.libcxx_changed = True
 
         # libcxx_old = str(self.settings.compiler.libcxx)
@@ -1574,10 +1558,8 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             #     del self.options.fix_march
 
             march_id, microarchitecture = march_conan_manip(self)
-            self.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
             self.options["*"].march_id = march_id
             self.options["*"].microarchitecture = microarchitecture
-            self.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
 
             if self.options.get_safe("march_id") is not None:
                 self.options.march_id = march_id
@@ -1585,25 +1567,22 @@ class KnuthConanFile(KnuthCxx11ABIFixer):
             if self.options.get_safe("microarchitecture") is not None:
                 self.options.microarchitecture = microarchitecture
 
-            self.output.info("self.options[*].march_id: %s" % (self.options["*"].march_id,))
-
-            self.output.info("Vendor ID: %s" % vendorID())
-            self.output.info("Brand name: %s" % brandName())
-            self.output.info("Cache line: %s" % cacheLine())
-            self.output.info("Family model: %s, %s" % familyModel())
-            self.output.info("Threads per core: %s" % threadsPerCore())
-            self.output.info("Logical cores: %s" % logicalCores())
-            self.output.info("Physical cores: %s" % physicalCores())
-            self.output.info("Logical CPU: %s" % LogicalCPU())
-            self.output.info("VM: %s" % VM())
-            self.output.info("Hyperthreading: %s" % Hyperthreading())
-
-            self.output.info("This computer microarchitecture: %s%s" % cpuid.cpu_microarchitecture())
-            self.output.info("This computer microarchitecture ID: %s" % get_architecture_id())
-            self.output.info("This computer extensions -------------------------")
-            exts = get_available_extensions()
-            exts_names = extensions_to_names(exts)
-            self.output.info(", ".join(exts_names))
+            # self.output.info("Vendor ID: %s" % vendorID())
+            # self.output.info("Brand name: %s" % brandName())
+            # self.output.info("Cache line: %s" % cacheLine())
+            # self.output.info("Family model: %s, %s" % familyModel())
+            # self.output.info("Threads per core: %s" % threadsPerCore())
+            # self.output.info("Logical cores: %s" % logicalCores())
+            # self.output.info("Physical cores: %s" % physicalCores())
+            # self.output.info("Logical CPU: %s" % LogicalCPU())
+            # self.output.info("VM: %s" % VM())
+            # self.output.info("Hyperthreading: %s" % Hyperthreading())
+            # # self.output.info("This computer microarchitecture: %s%s" % cpuid.cpu_microarchitecture())
+            # # self.output.info("This computer microarchitecture ID: %s" % get_architecture_id())
+            # # self.output.info("This computer extensions -------------------------")
+            # exts = get_available_extensions()
+            # exts_names = extensions_to_names(exts)
+            # self.output.info(", ".join(exts_names))
             #TODO(fernando): print build march_id and extensions
 
             if self.options.get_safe("march_id") is not None:
