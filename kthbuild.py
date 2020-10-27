@@ -1460,22 +1460,22 @@ class KnuthCxx11ABIFixer(ConanFile):
             return
 
         if not (self.settings.compiler == "gcc" or self.settings.compiler == "clang"):
-            self.output.info("glibcxx_supports_cxx11_abi option is only valid for 'gcc' or 'clang' compilers, deleting it. Your compiler is: '%s'." % (str(self.settings.compiler),))
+            # self.output.info("glibcxx_supports_cxx11_abi option is only valid for 'gcc' or 'clang' compilers, deleting it. Your compiler is: '%s'." % (str(self.settings.compiler),))
             del self.options.glibcxx_supports_cxx11_abi
             return
 
         if self.settings.compiler == "gcc" and self.settings.os == "Windows":
-            self.output.info("glibcxx_supports_cxx11_abi option is not valid for 'MinGW' compiler, deleting it. Your compiler is: '%s, %s'." % (str(self.settings.compiler),str(self.settings.os)))
+            # self.output.info("glibcxx_supports_cxx11_abi option is not valid for 'MinGW' compiler, deleting it. Your compiler is: '%s, %s'." % (str(self.settings.compiler),str(self.settings.os)))
             del self.options.glibcxx_supports_cxx11_abi
             return
 
         if self.settings.get_safe("compiler.libcxx") is None:
-            self.output.info("glibcxx_supports_cxx11_abi option is only useful for 'libstdc++' or 'libstdc++11', deleting it. Your compiler.libcxx is: '%s'." % (str(self.settings.compiler.libcxx),))
+            # self.output.info("glibcxx_supports_cxx11_abi option is only useful for 'libstdc++' or 'libstdc++11', deleting it. Your compiler.libcxx is: '%s'." % (str(self.settings.compiler.libcxx),))
             del self.options.glibcxx_supports_cxx11_abi
             return
 
         if not (str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11"):
-            self.output.info("glibcxx_supports_cxx11_abi option is only useful for 'libstdc++' or 'libstdc++11', deleting it. Your compiler.libcxx is: '%s'." % (str(self.settings.compiler.libcxx),))
+            # self.output.info("glibcxx_supports_cxx11_abi option is only useful for 'libstdc++' or 'libstdc++11', deleting it. Your compiler.libcxx is: '%s'." % (str(self.settings.compiler.libcxx),))
             del self.options.glibcxx_supports_cxx11_abi
             return
 
@@ -1504,7 +1504,7 @@ class KnuthCxx11ABIFixer(ConanFile):
 
     def package_id(self):
         ConanFile.package_id(self)
-        self.output.info("package_id() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
+        # self.output.info("package_id() - glibcxx_supports_cxx11_abi: %s" % (self.options.get_safe("glibcxx_supports_cxx11_abi"),))
         # self.info.settings.compiler.libcxx = "libstdc++11"
 
         #For Knuth Packages libstdc++ and libstdc++11 are the same
