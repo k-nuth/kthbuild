@@ -700,10 +700,11 @@ def get_conan_upload_for_remote(org_name):
 def get_conan_remotes(org_name):
     # While redundant, this moves upload remote to position 0.
     # remotes = [get_conan_upload_for_remote(org_name),
-    #           'https://api.bintray.com/conan/k-nuth/kth',
-    #           'https://api.bintray.com/conan/bitprim/bitprim']
+    #           'https://knuth.jfrog.io/artifactory/api/conan/knuth',
+    #           'https://taocpp.jfrog.io/artifactory/api/conan/tao',]
 
     remotes = [get_conan_upload_for_remote(org_name),
+              'https://conan.bintray.com',
               'https://taocpp.jfrog.io/artifactory/api/conan/tao']
 
     # # Add bincrafters repository for other users, e.g. if the package would
