@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-# 
-# Copyright (c) 2019-2020 Knuth Project
-# 
+#
+# Copyright (c) 2019-2021 Knuth Project
+#
 
 from setuptools import setup
 from setuptools.command.install import install
@@ -12,11 +12,11 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.85"
+__version__ = "0.0.86"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
-__copyright__ = "Copyright (c) 2019-2020 Knuth Project"
+__copyright__ = "Copyright (c) 2019-2021 Knuth Project"
 
 
 install_requires = [
@@ -25,13 +25,13 @@ install_requires = [
 ]
 
 def running_in_cpt_context():
-    # -e CONAN_UPLOAD="https://api.bintray.com/conan/k-nuth/kth@True@upload_repo" 
-    # -e CONAN_REMOTES="https://api.bintray.com/conan/k-nuth/kth@True@upload_repo,https://api.bintray.com/conan/bitprim/bitprim@True@remote1" 
-    # -e CONAN_REFERENCE="kth-infrastructure/0.6.0@kth/feature-ci-marchs" 
-    # -e CPT_PROFILE="@@include(default)@@@@[settings]@@arch=x86_64@@build_type=Release@@compiler=gcc@@compiler.version=9@@[options]@@kth-infrastructure:shared=False@@kth-infrastructure:march_id=4fZKi37a595hP@@kth-infrastructure:with_tests=False@@kth-infrastructure:with_examples=False@@[env]@@KTH_BRANCH=feature-ci-marchs@@KTH_CONAN_CHANNEL=feature-ci-marchs@@KTH_FULL_BUILD=0@@KTH_CONAN_VERSION=0.6.0@@[build_requires]@@@@" 
+    # -e CONAN_UPLOAD="https://knuth.jfrog.io/artifactory/api/conan/knuth@True@upload_repo"
+    # -e CONAN_REMOTES="https://knuth.jfrog.io/artifactory/api/conan/knuth@True@upload_repo,https://api.bintray.com/conan/bitprim/bitprim@True@remote1"
+    # -e CONAN_REFERENCE="kth-infrastructure/0.6.0@kth/feature-ci-marchs"
+    # -e CPT_PROFILE="@@include(default)@@@@[settings]@@arch=x86_64@@build_type=Release@@compiler=gcc@@compiler.version=9@@[options]@@kth-infrastructure:shared=False@@kth-infrastructure:march_id=4fZKi37a595hP@@kth-infrastructure:with_tests=False@@kth-infrastructure:with_examples=False@@[env]@@KTH_BRANCH=feature-ci-marchs@@KTH_CONAN_CHANNEL=feature-ci-marchs@@KTH_FULL_BUILD=0@@KTH_CONAN_VERSION=0.6.0@@[build_requires]@@@@"
     return (os.getenv("CONAN_UPLOAD", None) != None or
-           os.getenv("CONAN_REMOTES", None) != None or     
-           os.getenv("CONAN_REFERENCE", None) != None or     
+           os.getenv("CONAN_REMOTES", None) != None or
+           os.getenv("CONAN_REFERENCE", None) != None or
            os.getenv("CPT_PROFILE", None) != None)
 
 class PostInstallCommand(install):
@@ -40,14 +40,13 @@ class PostInstallCommand(install):
     def run(self):
         install.run(self)
         if not running_in_cpt_context():
-            self.__setup_conan_remote("kthbuild_kth_temp_",     'https://api.bintray.com/conan/k-nuth/kth')
-            self.__setup_conan_remote("kthbuild_tao_temp_",     'https://api.bintray.com/conan/tao-cpp/tao')
-            # self.__setup_conan_remote("kthbuild_bitprim_temp_", 'https://api.bintray.com/conan/bitprim/bitprim')
+            self.__setup_conan_remote("kthbuild_kth_temp_",     'https://knuth.jfrog.io/artifactory/api/conan/knuth')
+            self.__setup_conan_remote("kthbuild_tao_temp_",     'https://taocpp.jfrog.io/artifactory/api/conan/tao')
 
     def __setup_conan_remote(self, remote_alias, remote_url):
         try:
             # remote_alias = "kthbuild_kth_temp_"
-            # remote_url = 'https://api.bintray.com/conan/k-nuth/kth'
+            # remote_url = 'https://knuth.jfrog.io/artifactory/api/conan/knuth'
             params = ["conan", "remote", "add", remote_alias, remote_url]
             res = subprocess.Popen(params, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, _ = res.communicate()
@@ -100,7 +99,7 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: Implementation :: CPython",
-    ],    
+    ],
 
     # What does your project relate to?
     keywords='knuth kth crypto bitcoin btc bch cash build tool',
@@ -109,7 +108,7 @@ setup(
 
     install_requires=install_requires,
     # setup_requires=setup_requires,
-    
+
 
     dependency_links=[
         'https://testpypi.python.org/pypi',
