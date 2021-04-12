@@ -703,9 +703,9 @@ def get_conan_remotes(org_name):
     #           'https://knuth.jfrog.io/artifactory/api/conan/knuth',
     #           'https://taocpp.jfrog.io/artifactory/api/conan/tao',]
 
-    remotes = [get_conan_upload_for_remote(org_name),
-              'https://conan.bintray.com',
-              'https://taocpp.jfrog.io/artifactory/api/conan/tao']
+    remotes = ['https://conan.bintray.com',
+               get_conan_upload_for_remote(org_name),
+               'https://taocpp.jfrog.io/artifactory/api/conan/tao']
 
     # # Add bincrafters repository for other users, e.g. if the package would
     # # require other packages from the bincrafters repo.
