@@ -60,13 +60,15 @@ script:
   - |
     if [[ "${UPLOAD_PKG}" == "true" ]]; then
 
-      if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-        twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
-      else
-        # For Testing Release
-        # twine upload -r test -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
-        twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} --repository-url https://test.pypi.org/legacy/ dist/*  || true
-      fi
+      twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
+
+      # if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+      #   twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
+      # else
+      #   # For Testing Release
+      #   # twine upload -r test -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
+      #   twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} --repository-url https://test.pypi.org/legacy/ dist/*  || true
+      # fi
     fi
 
 
