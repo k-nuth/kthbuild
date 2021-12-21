@@ -1,0 +1,70 @@
+name: Build and Test
+
+on: [push, pull_request]
+
+jobs:
+  builds:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+    name: Linux
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - uses: actions/setup-python@v1
+        with:
+          python-version: "3.8"
+
+      - name: Install Dependencies
+        run: |
+          pip install pip --upgrade
+          pip install wheel --upgrade
+          pip install twine --upgrade
+          pip install cpuid --upgrade
+          pip install conan --upgrade
+          pip install setuptools --upgrade
+        shell: bash
+
+      - name: Settting EnvVars
+        shell: bash
+        run: |
+          echo "UNIT_TESTS=true" >> $GITHUB_ENV
+          echo "UPLOAD_PKG=true" >> $GITHUB_ENV
+
+      - name: Build
+        env:
+          PYPI_USER_NAME: ${{ secrets.PYPI_USER_NAME }}
+          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        shell: bash
+        run: |
+          echo ${PYPI_USER_NAME}
+          echo ${PYPI_PASSWORD}
+
+
+          set -e
+          set -x
+          python --version
+
+          # pip install -v -e .
+          pip install -e .
+
+          if [[ "${UPLOAD_PKG}" == "true" ]]; then
+            python setup.py sdist
+            # python setup.py bdist_wheel --universal
+          fi
+
+          if [[ "${UPLOAD_PKG}" == "true" ]]; then
+
+            if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
+              twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
+            else
+              # For Testing Release
+              # twine upload -r test -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
+              twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} --repository-url https://test.pypi.org/legacy/ dist/*  || true
+            fi
+          fi
+
+
+# References:
+  # https://github.com/radareorg/radare2
