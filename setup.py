@@ -12,7 +12,7 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.90"
+__version__ = "0.0.91"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -20,7 +20,7 @@ __copyright__ = "Copyright (c) 2019-2021 Knuth Project"
 
 
 install_requires = [
-    "conan >= 1.35.1",
+    "conan >= 1.43.2",
     "cpuid >= 0.0.9",
 ]
 

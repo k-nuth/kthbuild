@@ -703,7 +703,7 @@ def get_conan_remotes(org_name):
     #           'https://knuth.jfrog.io/artifactory/api/conan/knuth',
     #           'https://taocpp.jfrog.io/artifactory/api/conan/tao',]
 
-    remotes = ['https://conan.bintray.com',
+    remotes = ['https://center.conan.io',
                get_conan_upload_for_remote(org_name),
                'https://taocpp.jfrog.io/artifactory/api/conan/tao']
 
