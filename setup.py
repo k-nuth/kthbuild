@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 #
-# Copyright (c) 2019-2021 Knuth Project
+# Copyright (c) 2019-2022 Knuth Project
 #
 
 from setuptools import setup
@@ -12,15 +12,15 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "0.0.91"
+__version__ = "0.0.92"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
-__copyright__ = "Copyright (c) 2019-2021 Knuth Project"
+__copyright__ = "Copyright (c) 2019-2022 Knuth Project"
 
 
 install_requires = [
-    "conan >= 1.43.2",
+    "conan >= 1.47.0",
     "cpuid >= 0.0.9",
 ]
 
