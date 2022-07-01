@@ -1548,7 +1548,10 @@ class KnuthConanFile(ConanFile):
 
         # self.output.info("libcxx: %s" % (str(self.settings.compiler.libcxx),))
         # KnuthCxx11ABIFixer.configure(self, pure_c)
-        ConanFile.configure(self, pure_c)
+
+        ConanFile.configure(self)
+        if pure_c:
+            del self.settings.compiler.libcxx               #Pure-C Library
 
         if self.options.get_safe("currency") is not None:
             self.options["*"].currency = self.options.currency
