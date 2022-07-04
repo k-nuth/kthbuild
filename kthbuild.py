@@ -200,8 +200,6 @@ def get_git_describe(default=None):
     except:
         return default
 
-
-
 def get_version_from_git_describe_no_releases(default=None, is_dev_branch=False):
     describe = get_git_describe()
 
@@ -344,7 +342,6 @@ def is_development_branch_internal(branch = None):
         return False
 
     return True
-
 
 def is_development_branch():
     branch = get_branch()
@@ -583,8 +580,6 @@ def branch_to_channel(branch):
 def get_channel_from_branch():
     return branch_to_channel(get_branch())
 
-
-
 def get_channel_no_recipe_dir():
     channel = get_channel_from_file_no_recipe_dir()
 
@@ -623,7 +618,6 @@ def get_user_no_recipe_dir():
 def get_repository():
     return os.getenv("KTH_BINTRAY_REPOSITORY", DEFAULT_REPOSITORY)
 
-
 def get_content_with_dir(dir, file_name):
     # print(__file__)
     # print(os.path.abspath(__file__))
@@ -644,10 +638,6 @@ def get_content_default_with_dir(dir, file_name, default=None):
         # print(file_name)
         # print(e)
         return default
-
-
-
-
 
 def get_conan_req_version(recipe_dir):
     # return get_content_default('conan_req_version', None)
@@ -676,7 +666,6 @@ def get_user_repository(org_name, repository_name):
     # https://api.bintray.com/conan/k-nuth/kth
     # return "https://api.bintray.com/conan/{0}/{1}".format(org_name.lower(), repository_name)
     return "https://knuth.jfrog.io/artifactory/api/conan/knuth"
-
 
 def is_pull_request_appveyor():
     return os.getenv("APPVEYOR_PULL_REQUEST_NUMBER", None) is not None
@@ -723,7 +712,6 @@ def get_archs():
     # if get_os() == "Macos" and archs is None:
     #     return ["x86_64"]
     # return split_colon_env("CONAN_ARCHS") if archs else None
-
 
 def get_builder(recipe_dir, args=None):
     name = get_name_from_recipe(recipe_dir)
@@ -813,12 +801,34 @@ def filter_marchs_tests(name, builds, test_options, march_opt=None):
 
 # --------------------------------------------
 
-# https://gcc.gnu.org/onlinedocs/gcc-4.8.0/gcc/i386-and-x86_002d64-Options.html
-# https://gcc.gnu.org/onlinedocs/gcc-7.4.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-8.3.0/gcc/x86-Options.html#x86-Options
-# https://gcc.gnu.org/onlinedocs/gcc-9.1.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-3.1.1/gcc/i386-and-x86-64-Options.html#i386%20and%20x86-64%20Options
+# https://gcc.gnu.org/onlinedocs/gcc-3.2.3/gcc/i386-and-x86-64-Options.html#i386%20and%20x86-64%20Options
+# https://gcc.gnu.org/onlinedocs/gcc-3.3.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-3.4.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
 
+# https://gcc.gnu.org/onlinedocs/gcc-4.0.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.2.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.3.6/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.4.7/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.5.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.6.4/gcc/i386-and-x86_002d64-Options.html#i386-and-x86_002d64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.7.4/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.8.5/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
+# https://gcc.gnu.org/onlinedocs/gcc-4.9.4/gcc/i386-and-x86-64-Options.html#i386-and-x86-64-Options
 
+# https://gcc.gnu.org/onlinedocs/gcc-5.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-6.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-7.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-8.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-9.5.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-10.4.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-11.3.0/gcc/x86-Options.html#x86-Options
+# https://gcc.gnu.org/onlinedocs/gcc-12.1.0/gcc/x86-Options.html#x86-Options
+
+# ------------------------------------------------------------------------------------------------
+
+# https://github.com/pixelb/scripts/blob/master/scripts/gcccpuopt
 
 def get_cpuid():
     try:
@@ -947,7 +957,6 @@ marchs_extensions = {
     'nano-x2':        ['64-bit extensions', 'MMX', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4.1'],
     'nano-x4':        ['64-bit extensions', 'MMX', 'SSE', 'SSE2', 'SSE3', 'SSSE3', 'SSE4.1'],
 }
-
 
 marchs_aliases = {
     'k8':            'k8',
@@ -1154,11 +1163,6 @@ def is_known_microarchitecture(x):
             return True
 
     return False
-
-
-
-
-
 
 def get_full_family():
     return marchs_families['gcc'][9]
@@ -1975,6 +1979,76 @@ class KnuthConanFile(ConanFile):
 
 # --------------------------------------------------------------------------------
 
+# GCC 12
+# gcc --version
+# gcc (GCC) 12.1.1 20220507 (Red Hat 12.1.1-1)
+# cc1: note: valid arguments to ‘-march=’ switch are: nocona core2 nehalem corei7 westmere sandybridge corei7-avx ivybridge core-avx-i haswell core-avx2 broadwell skylake skylake-avx512 cannonlake icelake-client rocketlake icelake-server cascadelake tigerlake cooperlake sapphirerapids alderlake bonnell atom silvermont slm goldmont goldmont-plus tremont knl knm x86-64 x86-64-v2 x86-64-v3 x86-64-v4 eden-x2 nano nano-1000 nano-2000 nano-3000 nano-x2 eden-x4 nano-x4 k8 k8-sse3 opteron opteron-sse3 athlon64 athlon64-sse3 athlon-fx amdfam10 barcelona bdver1 bdver2 bdver3 bdver4 znver1 znver2 znver3 btver1 btver2 native
+# nocona
+# core2
+# nehalem
+# corei7
+# westmere
+# sandybridge
+# corei7-avx
+# ivybridge
+# core-avx-i
+# haswell
+# core-avx2
+# broadwell
+# skylake
+# skylake-avx512
+# cannonlake
+# icelake-client
+# rocketlake
+# icelake-server
+# cascadelake
+# tigerlake
+# cooperlake
+# sapphirerapids
+# alderlake
+# bonnell
+# atom
+# silvermont
+# slm
+# goldmont
+# goldmont-plus
+# tremont
+# knl
+# knm
+# x86-64
+# x86-64-v2
+# x86-64-v3
+# x86-64-v4
+# eden-x2
+# nano
+# nano-1000
+# nano-2000
+# nano-3000
+# nano-x2
+# eden-x4
+# nano-x4
+# k8
+# k8-sse3
+# opteron
+# opteron-sse3
+# athlon64
+# athlon64-sse3
+# athlon-fx
+# amdfam10
+# barcelona
+# bdver1
+# bdver2
+# bdver3
+# bdver4
+# znver1
+# znver2
+# znver3
+# btver1
+# btver2
+# native
+
+
+# --------------------------------------------------------------------------------
 
 # GCC7 no tiene: knm, cannonlake, icelake-client, icelake-server
 # GCC6 no tiene: ninguno de los VIA que tenemos
@@ -2508,8 +2582,7 @@ def support_abm():                  #lzcnt and popcnt
 
 def support_pku():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
-    # return (c & 0x00000008) != 0
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 3)) != 0
 
 def support_avx_cpu():
@@ -2519,8 +2592,7 @@ def support_avx_cpu():
 
 def support_avx2_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 5)) != 0
 
 def support_aes():                          # AES Native instructions
@@ -2535,8 +2607,7 @@ def support_pclmul():
 
 def support_fsgsbase():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 0)) != 0
 
 def support_rdrnd():
@@ -2557,17 +2628,17 @@ def support_fma4_cpu():
 # 0000_0007h (ECX=0) EBX[3]
 def support_bmi():
     if max_function_id() < 0x00000007: return False
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 3)) != 0
 
 # 0000_0007h (ECX=0) EBX[8]
 def support_bmi2():
     if not support_bmi(): return False
     if max_function_id() < 0x00000007: return False
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 8)) != 0
 
-#Note(fernando): check if CPU is AMD, I think it is not necessary
+# 8000_0001h ECX[21] TBM
 # static bool TBM(void) { return CPU_Rep.isAMD_ && CPU_Rep.f_81_ECX_[21]; }
 def support_tbm():
     if max_extended_function() < 0x80000001: return False
@@ -2581,15 +2652,13 @@ def support_f16c():
 
 def support_rdseed():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 18)) != 0
 
 # https://en.wikipedia.org/wiki/Intel_ADX
 def support_adx():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 19)) != 0
 
 # https://www.intel.com/content/dam/www/public/us/en/documents/manuals/64-ia-32-architectures-software-developer-instruction-set-reference-manual-325383.pdf
@@ -2602,13 +2671,12 @@ def support_prefetchw():
 
 def support_prefetchwt1():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 0)) != 0
 
 def support_clflushopt():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 23)) != 0
 
 def support_xsave_cpu():
@@ -2638,106 +2706,99 @@ def support_xsaves_cpu():
 
 def support_avx512f_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 16)) != 0
 
 def support_avx512pf_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 26)) != 0
 
 def support_avx512er_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 27)) != 0
 
 def support_avx512vl_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 31)) != 0
 
 def support_avx512bw_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 30)) != 0
 
 def support_avx512dq_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 17)) != 0
 
 def support_avx512cd_cpu():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 28)) != 0
 
 def support_avx5124vnniw_cpu():
     if max_function_id() < 0x00000007: return False
     # _, _, _, d = cpuid.cpuid(0x00000007)
-    _, _, _, d = cpuid.cpuid_count(7, 0)
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 0)
     return (d & (1 << 2)) != 0
 
 def support_avx5124fmaps_cpu():
     if max_function_id() < 0x00000007: return False
     # _, _, _, d = cpuid.cpuid(0x00000007)
-    _, _, _, d = cpuid.cpuid_count(7, 0)
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 0)
     return (d & (1 << 3)) != 0
 
 def support_avx512vbmi_cpu():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 1)) != 0
 
 def support_avx512ifma_cpu():
     if max_function_id() < 0x00000007: return False
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 21)) != 0
 
 def support_avx512vbmi2_cpu():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 6)) != 0
 
 def support_avx512vpopcntdq_cpu():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 14)) != 0
 
 def support_avx512bitalg_cpu():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 12)) != 0
 
 def support_avx512vnni_cpu():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 11)) != 0
 
 def support_avx512bf16_cpu():
     if max_function_id() < 0x00000007: return False
-    a, _, _, _ = cpuid.cpuid_count(7, 1)
+    a, _, _, _ = cpuid.cpuid_count(0x00000007, 1)
     return (a & (1 << 5)) != 0
 
 def support_avx512vp2intersect_cpu():
     if max_function_id() < 0x00000007: return False
-    _, _, _,d = cpuid.cpuid_count(7, 0)
+    _, _, _,d = cpuid.cpuid_count(0x00000007, 0)
     return (d & (1 << 8)) != 0
 
 def support_sha():
     if max_function_id() < 0x00000007: return False
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 29)) != 0
 
 def support_clwb():
     if max_function_id() < 0x00000007: return False
-    _, b, _, _ = cpuid.cpuid_count(7, 0)
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
     return (b & (1 << 24)) != 0
 
 # TODO(fernando): ver Enclave en Golang
@@ -2746,7 +2807,7 @@ def support_enclv():
 
 def support_umip():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 2)) != 0
 
 # https://hjlebbink.github.io/x86doc/html/PTWRITE.html
@@ -2761,7 +2822,7 @@ def support_ptwrite():
 
 def support_rdpid():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 22)) != 0
 
 # TODO(fernando): SGX?
@@ -2771,7 +2832,7 @@ def support_sgx():
 
 def support_gfni():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 8)) != 0
 
 # https://software.intel.com/en-us/forums/intel-isa-extensions/topic/810449
@@ -2780,17 +2841,18 @@ def support_gfni_sse():
 
 def support_vpclmulqdq():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 10)) != 0
 
+# 0000_0007_0 ECX[9]
 def support_vaes():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 9)) != 0
 
 def support_pconfig():
     if max_function_id() < 0x00000007: return False
-    _, _, _, d = cpuid.cpuid_count(7, 0)
+    _, _, _, d = cpuid.cpuid_count(0x00000007, 0)
     return (d & (1 << 18)) != 0
 
 def support_wbnoinvd():
@@ -2801,12 +2863,12 @@ def support_wbnoinvd():
 #https://www.felixcloutier.com/x86/movdiri
 def support_movdir():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 27)) != 0
 
 def support_movdir64b():
     if max_function_id() < 0x00000007: return False
-    _, _, c, _ = cpuid.cpuid_count(7, 0)
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     return (c & (1 << 28)) != 0
 
 # https://www.extremetech.com/computing/296246-intel-announces-cooper-lake-will-be-socketed-compatible-with-future-ice-lake-cpus
@@ -2874,6 +2936,59 @@ def support_mmxext():
     if max_extended_function() < 0x80000001: return False
     _, _, _, d = cpuid.cpuid(0x80000001)
     return d & (1 << 22) != 0
+
+# https://www.amd.com/system/files/TechDocs/24594.pdf
+# 8000_0008 EBX[8]
+def support_mcommit():
+    if max_extended_function() < 0x80000008: return False
+    _, b, _, _ = cpuid.cpuid(0x80000008)
+    return (b & (1 << 8)) != 0
+
+# https://www.amd.com/system/files/TechDocs/24594.pdf
+# 8000_0008 EBX[4]
+def support_rdpru():
+    if max_extended_function() < 0x80000008: return False
+    _, b, _, _ = cpuid.cpuid(0x80000008)
+    return (b & (1 << 4)) != 0
+
+# https://www.amd.com/system/files/TechDocs/24594.pdf
+# 0000_0007_0 EBX[10]
+def support_invpcid():
+    if max_function_id() < 0x00000007: return False
+    _, b, _, _ = cpuid.cpuid_count(0x00000007, 0)
+    return (b & (1 << 10)) != 0
+
+# https://www.amd.com/system/files/TechDocs/24594.pdf
+# 8000_0008 EBX[3]
+def support_invlpgb_tlbsync():
+    if max_extended_function() < 0x80000008: return False
+    _, b, _, _ = cpuid.cpuid(0x80000008)
+    return (b & (1 << 3)) != 0
+
+# OSPKE (Instructions RDPKRU, WRPKRU)
+# OS has enabled Memory Protection Keys and use of the RDPKRU/WRPKRU instructions by setting CR4.PKE=1.
+# Note(fernando): I think it is related to PKU
+# 0000_0007_0 ECX[4]
+def support_ospke():
+    # We do not need to check OS flags. We just need to check CPU flags because
+    # if max_function_id() < 0x00000007: return False
+    # _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
+    # return (c & (1 << 4)) != 0
+    return False
+
+# Shadow Stack (Instructions CLRSSBSY, INCSSP, RDSSP, RSTORSSP, SAVEPREVSSP, SETSSBSY, WRSS, WRUSS)
+# 0000_0007_0 ECX[7]
+def support_cet_ss():
+    if max_function_id() < 0x00000007: return False
+    _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
+    return (c & (1 << 7)) != 0
+
+# SNP (Instructions PSMASH, PVALIDATE, RMPADJUST, RMPUPDATE)
+# 8000_001F EAX[4]
+def support_snp():
+    if max_extended_function() < 0x8000001F: return False
+    a, _, _, _ = cpuid.cpuid(0x8000001F)
+    return (a & (1 << 4)) != 0
 
 
 
@@ -2985,8 +3100,6 @@ def support_avx512bf16_os():
 def support_avx512vp2intersect_os():
     return support_avx512_os() and support_avx512vp2intersect_cpu()
 
-
-
 # -----------------------------------------------------------------
 
 
@@ -3071,13 +3184,15 @@ extensions_map = {
     75:  support_mmxext,
     76:  support_prefetchwt1,
 
-    77:  reserved,
-    78:  reserved,
-    79:  reserved,
-    80:  reserved,
-    81:  reserved,
-    82:  reserved,
-    83:  reserved,
+    77:  support_mcommit,
+    78:  support_rdpru,
+
+    79:  support_invpcid,
+    80:  support_invlpgb_tlbsync,
+    81:  support_ospke,                # Instructions RDPKRU, WRPKRU
+    82:  support_cet_ss,               # Instructions CLRSSBSY, INCSSP, RDSSP, RSTORSSP, SAVEPREVSSP, SETSSBSY, WRSS, WRUSS
+    83:  support_snp,                  # Instructions PSMASH, PVALIDATE, RMPADJUST, RMPUPDATE
+
     84:  reserved,
     85:  reserved,
     86:  reserved,
@@ -3333,13 +3448,15 @@ extensions_names = {
     75:  "mmxext",
     76:  "prefetchwt1",
 
-    77:  "__reserved__",
-    78:  "__reserved__",
-    79:  "__reserved__",
-    80:  "__reserved__",
-    81:  "__reserved__",
-    82:  "__reserved__",
-    83:  "__reserved__",
+    77:  "mcommit",
+    78:  "rdpru",
+
+    79:  "invpcid",
+    80:  "invlpgb-tlbsync",
+    81:  "ospke",
+    82:  "cet_ss",
+    83:  "snp",
+
     84:  "__reserved__",
     85:  "__reserved__",
     86:  "__reserved__",
@@ -3602,6 +3719,15 @@ extensions_flags['gcc'] = {
     74:  "-mclzero",
     75:  "-mmmxext",
     76:  "-mprefetchwt1",
+
+    77:  "-mmcommit",
+    78:  "-mrdpru",
+
+    79:  "-minvpcid",
+    80:  "-minvlpgb-tlbsync",
+    81:  "-mospke",
+    82:  "-mcet_ss",
+    83:  "-msnp",
 }
 
 extensions_flags['apple-clang'] = {
@@ -3684,6 +3810,15 @@ extensions_flags['apple-clang'] = {
     74:  "-mclzero",
     75:  "-mmmxext",
     76:  "-mprefetchwt1",
+
+    77:  "-mmcommit",
+    78:  "-mrdpru",
+
+    79:  "-minvpcid",
+    80:  "-minvlpgb-tlbsync",
+    81:  "-mospke",
+    82:  "-mcet_ss",
+    83:  "-msnp",
 }
 
 # Clang 9
@@ -3768,6 +3903,15 @@ extensions_flags['clang'] = {
     74:  "-mclzero",
     75:  "-mmmxext",
     76:  "-mprefetchwt1",
+
+    77:  "-mmcommit",
+    78:  "-mrdpru",
+
+    79:  "-minvpcid",
+    80:  "-minvlpgb-tlbsync",
+    81:  "-mospke",
+    82:  "-mcet_ss",
+    83:  "-msnp",
 }
 
 extensions_flags['msvc'] = {
@@ -3850,6 +3994,16 @@ extensions_flags['msvc'] = {
     74:  "",
     75:  "",
     76:  "",
+
+    # TODO: new AMD instructions
+    77:  "",
+    78:  "",
+
+    79:  "",
+    80:  "",
+    81:  "",
+    82:  "",
+    83:  "",
 }
 
 extensions_flags['mingw'] = {
@@ -3932,6 +4086,15 @@ extensions_flags['mingw'] = {
     74:  "-mclzero",
     75:  "-mmmxext",
     76:  "-mprefetchwt1",
+
+    77:  "-mmcommit",
+    78:  "-mrdpru",
+
+    79:  "-minvpcid",
+    80:  "-minvlpgb-tlbsync",
+    81:  "-mospke",
+    82:  "-mcet_ss",
+    83:  "-msnp",
 }
 
 
@@ -3970,85 +4133,94 @@ extensions_flags['mingw'] = {
 # clang: error: unknown argument: '-mmovdir64b'
 
 extensions_compiler_compat = {
-    0:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"64 bits",
-    1:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"movbe",
-    2:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mmx",
-    3:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse",
-    4:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse2",
-    5:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse3",
-    6:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"ssse3",
-    7:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse41",
-    8:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse42",
-    9:   {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse4a",
-    10:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"popcnt",
-    11:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"lzcnt",
-    12:  {'gcc':6, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 6}, #"pku",
-    13:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx",
-    14:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx2",
-    15:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"aes",
-    16:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"pclmul",
-    17:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fsgsbase",
-    18:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"rdrnd",
-    19:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fma3",
-    20:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fma4",
-    21:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"abm",
-    22:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bmi",
-    23:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bmi2",
-    24:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"tbm",
-    25:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"f16c",
-    26:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"rdseed",
-    27:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"adx",
-    28:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"prefetchw",
-    29:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clflushopt",
-    30:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsave",
-    31:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsaveopt",
-    32:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsavec",
-    33:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsaves",
+    0:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"64 bits",
+    1:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"movbe",
+    2:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mmx",
+    3:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse",
+    4:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse2",
+    5:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse3",
+    6:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"ssse3",
+    7:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse41",
+    8:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse42",
+    9:   {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sse4a",
+    10:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"popcnt",
+    11:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"lzcnt",
+    12:  {'gcc': 6, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 6}, #"pku",
+    13:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx",
+    14:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx2",
+    15:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"aes",
+    16:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"pclmul",
+    17:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fsgsbase",
+    18:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"rdrnd",
+    19:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fma3",
+    20:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"fma4",
+    21:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"abm",
+    22:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bmi",
+    23:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bmi2",
+    24:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"tbm",
+    25:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"f16c",
+    26:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"rdseed",
+    27:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"adx",
+    28:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"prefetchw",
+    29:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clflushopt",
+    30:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsave",
+    31:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsaveopt",
+    32:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsavec",
+    33:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xsaves",
 
-    34:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512f",
-    35:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512pf",
-    36:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512er",
-    37:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512vl",
-    38:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512bw",
-    39:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512dq",
-    40:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512cd",
-    41:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx5124vnniw",
-    42:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx5124fmaps",
-    43:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512vbmi",
-    44:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512ifma",
-    45:  {'gcc':8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512vbmi2",
-    46:  {'gcc':6, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 6}, #"avx512vpopcntdq",
-    47:  {'gcc':8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512bitalg",
-    48:  {'gcc':8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512vnni",
-    49:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512bf16",
-    50:  {'gcc':10,'apple-clang': 1,'clang': 9,'msvc': 14,'mingw': 10}, #"avx512vp2intersect",
+    34:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512f",
+    35:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512pf",
+    36:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512er",
+    37:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512vl",
+    38:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512bw",
+    39:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512dq",
+    40:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512cd",
+    41:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx5124vnniw",
+    42:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx5124fmaps",
+    43:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512vbmi",
+    44:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512ifma",
+    45:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512vbmi2",
+    46:  {'gcc': 6, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 6}, #"avx512vpopcntdq",
+    47:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512bitalg",
+    48:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"avx512vnni",
+    49:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"avx512bf16",
+    50:  {'gcc': 10,'apple-clang': 1,'clang': 9,'msvc': 14,'mingw': 10}, #"avx512vp2intersect",
 
-    51:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sha",
-    52:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clwb",
-    53:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"enclv",
-    54:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"umip",
-    55:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"ptwrite",
-    56:  {'gcc':6, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 6}, #"rdpid",
-    57:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sgx",
-    58:  {'gcc':8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"gfni",
-    59:  {'gcc':8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"gfni_sse",
-    60:  {'gcc':8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"vpclmulqdq",
-    61:  {'gcc':8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"vaes",
-    62:  {'gcc':8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"pconfig",
-    63:  {'gcc':8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"wbnoinvd",
-    64:  {'gcc':8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"movdir",
-    65:  {'gcc':8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"movdir64b",
-    66:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bfloat16",
-    67:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnow",
-    68:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnowext",
-    69:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnowprefetch",
-    70:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xop",
-    71:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"lwp",
-    72:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"cx16",
-    73:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mwaitx",
-    74:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clzero",
-    75:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mmxext",
-    76:  {'gcc':5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"prefetchwt1",
+    51:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sha",
+    52:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clwb",
+    53:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"enclv",
+    54:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"umip",
+    55:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"ptwrite",
+    56:  {'gcc': 6, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 6}, #"rdpid",
+    57:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sgx",
+    58:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"gfni",
+    59:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"gfni_sse",
+    60:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"vpclmulqdq",
+    61:  {'gcc': 8, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 8}, #"vaes",
+    62:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"pconfig",
+    63:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"wbnoinvd",
+    64:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"movdir",
+    65:  {'gcc': 8, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 8}, #"movdir64b",
+    66:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"bfloat16",
+    67:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnow",
+    68:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnowext",
+    69:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"3dnowprefetch",
+    70:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"xop",
+    71:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"lwp",
+    72:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"cx16",
+    73:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mwaitx",
+    74:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clzero",
+    75:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mmxext",
+    76:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"prefetchwt1",
+
+    77:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"mcommit",
+    78:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"rdpru",
+
+    79:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"invpcid",
+    80:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"invlpgb-tlbsync",
+    81:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"ospke",
+    82:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"cet_ss",
+    83:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"snp",
 }
 
 def get_available_extensions():
