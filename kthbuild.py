@@ -2554,18 +2554,18 @@ def support_fma4_cpu():
     _, _, c, _ = cpuid.cpuid(0x80000001)
     return (c & (1 << 16)) != 0
 
+# 0000_0007h (ECX=0) EBX[3]
 def support_bmi():
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
     _, b, _, _ = cpuid.cpuid_count(7, 0)
     return (b & (1 << 3)) != 0
 
+# 0000_0007h (ECX=0) EBX[8]
 def support_bmi2():
     if not support_bmi(): return False
     if max_function_id() < 0x00000007: return False
-    # _, b, _, _ = cpuid.cpuid(0x00000007)
     _, b, _, _ = cpuid.cpuid_count(7, 0)
-    return (b & (1 << 3)) != 0
+    return (b & (1 << 8)) != 0
 
 #Note(fernando): check if CPU is AMD, I think it is not necessary
 # static bool TBM(void) { return CPU_Rep.isAMD_ && CPU_Rep.f_81_ECX_[21]; }
