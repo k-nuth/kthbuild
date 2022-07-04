@@ -2969,8 +2969,8 @@ def support_invlpgb_tlbsync():
 # OS has enabled Memory Protection Keys and use of the RDPKRU/WRPKRU instructions by setting CR4.PKE=1.
 # Note(fernando): I think it is related to PKU
 # 0000_0007_0 ECX[4]
-def support_ospke():
-    # We do not need to check OS flags. We just need to check CPU flags because
+# Note(fernando): We do not need to check OS flags. We just need to check CPU flags because
+def support_ospke_unused():
     # if max_function_id() < 0x00000007: return False
     # _, _, c, _ = cpuid.cpuid_count(0x00000007, 0)
     # return (c & (1 << 4)) != 0
