@@ -3696,7 +3696,7 @@ extensions_flags['gcc'] = {
     51:  "-msha",
     52:  "-mclwb",
     53:  "-menclv",
-    54:  "",                            # TODO(fernando) -mumip dice estar soportado por GCC en las marchs pero no parece ser una flag independiente
+    54:  "",                            # umip: GCC does not support it
     55:  "-mptwrite",
     56:  "-mrdpid",
     57:  "-msgx",
@@ -3786,7 +3786,7 @@ extensions_flags['apple-clang'] = {
     51:  "-msha",
     52:  "-mclwb",
     53:  "-menclv",
-    54:  "",                            # TODO(fernando) -mumip dice estar soportado por GCC en las marchs pero no parece ser una flag independiente
+    54:  "",                            # umip: apple-clang does not support it
     55:  "-mptwrite",
     56:  "-mrdpid",
     57:  "-msgx",
@@ -3878,7 +3878,7 @@ extensions_flags['clang'] = {
     51:  "-msha",
     52:  "-mclwb",
     53:  "-menclv",
-    54:  "",                            # TODO(fernando) -mumip dice estar soportado por GCC en las marchs pero no parece ser una flag independiente
+    54:  "",                            # umip: Clang does not support it
     55:  "-mptwrite",
     56:  "-mrdpid",
     57:  "-msgx",
@@ -4059,7 +4059,7 @@ extensions_flags['mingw'] = {
     51:  "-msha",
     52:  "-mclwb",
     53:  "-menclv",
-    54:  "",                            # TODO(fernando) -mumip dice estar soportado por GCC en las marchs pero no parece ser una flag independiente
+    54:  "",                            # umip: MinGW does not support it
     55:  "-mptwrite",
     56:  "-mrdpid",
     57:  "-msgx",
@@ -4184,7 +4184,7 @@ extensions_compiler_compat = {
     51:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sha",
     52:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clwb",
     53:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"enclv",
-    54:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"umip",
+    54:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"umip",
     55:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"ptwrite",
     56:  {'gcc': 6, 'apple-clang': 1,'clang': 7,'msvc': 14,'mingw': 6}, #"rdpid",
     57:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"sgx",
