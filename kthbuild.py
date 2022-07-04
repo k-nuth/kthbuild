@@ -3189,10 +3189,10 @@ extensions_map = {
 
     79:  support_invpcid,
     80:  support_invlpgb_tlbsync,
-    81:  support_ospke,                # Instructions RDPKRU, WRPKRU
-    82:  support_cet_ss,               # Instructions CLRSSBSY, INCSSP, RDSSP, RSTORSSP, SAVEPREVSSP, SETSSBSY, WRSS, WRUSS
-    83:  support_snp,                  # Instructions PSMASH, PVALIDATE, RMPADJUST, RMPUPDATE
+    81:  support_cet_ss,               # Instructions CLRSSBSY, INCSSP, RDSSP, RSTORSSP, SAVEPREVSSP, SETSSBSY, WRSS, WRUSS
+    82:  support_snp,                  # Instructions PSMASH, PVALIDATE, RMPADJUST, RMPUPDATE
 
+    83:  reserved,
     84:  reserved,
     85:  reserved,
     86:  reserved,
@@ -3453,10 +3453,10 @@ extensions_names = {
 
     79:  "invpcid",
     80:  "invlpgb-tlbsync",
-    81:  "ospke",
-    82:  "cet_ss",
-    83:  "snp",
+    81:  "cet_ss",
+    82:  "snp",
 
+    83:  "__reserved__",
     84:  "__reserved__",
     85:  "__reserved__",
     86:  "__reserved__",
@@ -3725,9 +3725,8 @@ extensions_flags['gcc'] = {
 
     79:  "-minvpcid",
     80:  "-minvlpgb-tlbsync",
-    81:  "-mospke",
-    82:  "-mcet_ss",
-    83:  "-msnp",
+    81:  "-mcet_ss",
+    82:  "-msnp",
 }
 
 extensions_flags['apple-clang'] = {
@@ -3816,9 +3815,8 @@ extensions_flags['apple-clang'] = {
 
     79:  "-minvpcid",
     80:  "-minvlpgb-tlbsync",
-    81:  "-mospke",
-    82:  "-mcet_ss",
-    83:  "-msnp",
+    81:  "-mcet_ss",
+    82:  "-msnp",
 }
 
 # Clang 9
@@ -3909,9 +3907,8 @@ extensions_flags['clang'] = {
 
     79:  "-minvpcid",
     80:  "-minvlpgb-tlbsync",
-    81:  "-mospke",
-    82:  "-mcet_ss",
-    83:  "-msnp",
+    81:  "-mcet_ss",
+    82:  "-msnp",
 }
 
 extensions_flags['msvc'] = {
@@ -4003,7 +4000,6 @@ extensions_flags['msvc'] = {
     80:  "",
     81:  "",
     82:  "",
-    83:  "",
 }
 
 extensions_flags['mingw'] = {
@@ -4092,9 +4088,8 @@ extensions_flags['mingw'] = {
 
     79:  "-minvpcid",
     80:  "-minvlpgb-tlbsync",
-    81:  "-mospke",
-    82:  "-mcet_ss",
-    83:  "-msnp",
+    81:  "-mcet_ss",
+    82:  "-msnp",
 }
 
 
@@ -4218,9 +4213,8 @@ extensions_compiler_compat = {
 
     79:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"invpcid",
     80:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"invlpgb-tlbsync",
-    81:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"ospke",
-    82:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"cet_ss",
-    83:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"snp",
+    81:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"cet_ss",
+    82:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"snp",
 }
 
 def get_available_extensions():
