@@ -4205,7 +4205,7 @@ extensions_compiler_compat = {
     72:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"cx16",
     73:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mwaitx",
     74:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"clzero",
-    75:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"mmxext",
+    75:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"mmxext",
     76:  {'gcc': 5, 'apple-clang': 1,'clang': 6,'msvc': 14,'mingw': 5}, #"prefetchwt1",
 
     77:  {'gcc': None, 'apple-clang': None,'clang': None,'msvc': None,'mingw': None}, #"mcommit",
@@ -4471,13 +4471,28 @@ def filter_extensions(exts, os, comp, comp_ver):
 
     res = []
     for i in range(len(exts)):
-        if i in extensions_compiler_compat:
-            if extensions_compiler_compat[i][comp] <= comp_ver:
-                res.append(exts[i])
-            else:
-                res.append(0)
-        else:
+        if i not in extensions_compiler_compat:
             res.append(0)
+            continue
+
+        if extensions_compiler_compat[i][comp] is None:
+            res.append(0)
+            continue
+
+        if extensions_compiler_compat[i][comp] > comp_ver:
+            res.append(0)
+            continue
+
+        res.append(exts[i])
+
+        # if i in extensions_compiler_compat:
+        #     if extensions_compiler_compat[i][comp] is not None:
+        #         if extensions_compiler_compat[i][comp] <= comp_ver:
+        #             res.append(exts[i])
+        #         else:
+        #             res.append(0)
+        # else:
+        #     res.append(0)
 
     return res
 
