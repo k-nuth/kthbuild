@@ -540,27 +540,27 @@ def get_builder(recipe_dir, args=None):
 
 
 def march_conan_manip(conanobj):
-    self.output.info("KnuthConanFile.march_conan_manip() - 1")
+    conanobj.output.info("KnuthConanFile.march_conan_manip() - 1")
     if conanobj.settings.arch != "x86_64":
         return (None, None, None)
 
-    self.output.info("KnuthConanFile.march_conan_manip() - 2")
+    conanobj.output.info("KnuthConanFile.march_conan_manip() - 2")
 
     if conanobj.options.get_safe("march_id") is None:
         return (None, None, None)
 
-    self.output.info("KnuthConanFile.march_conan_manip() - 3")
+    conanobj.output.info("KnuthConanFile.march_conan_manip() - 3")
 
     if conanobj.options.get_safe("march_strategy") is None:
         return (None, None, None)
 
-    self.output.info("KnuthConanFile.march_conan_manip() - 4")
+    conanobj.output.info("KnuthConanFile.march_conan_manip() - 4")
 
     conanobj.march_data = get_all_data(str(conanobj.settings.os),
                                        str(conanobj.settings.compiler),
                                        float(str(conanobj.settings.compiler.version)))
 
-    self.output.info("KnuthConanFile.march_conan_manip() - 5")
+    conanobj.output.info("KnuthConanFile.march_conan_manip() - 5")
 
 
     march_from = 'taken from cpuid'
@@ -569,44 +569,44 @@ def march_conan_manip(conanobj):
     march_flags = None
 
     if conanobj.options.march_id == "_DUMMY_":
-        self.output.info("KnuthConanFile.march_conan_manip() - 6")
+        conanobj.output.info("KnuthConanFile.march_conan_manip() - 6")
 
         if conanobj.options.march_strategy == "optimized":
-            self.output.info("KnuthConanFile.march_conan_manip() - 7")
+            conanobj.output.info("KnuthConanFile.march_conan_manip() - 7")
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
             march_flags = conanobj.march_data['comp_flags']
         elif conanobj.options.march_strategy == "download_if_possible":
-            self.output.info("KnuthConanFile.march_conan_manip() - 8")
+            conanobj.output.info("KnuthConanFile.march_conan_manip() - 8")
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
             march_flags = conanobj.march_data['comp_flags']
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
             if is_superset_of(exts, level3_exts):
-                self.output.info("KnuthConanFile.march_conan_manip() - 9")
+                conanobj.output.info("KnuthConanFile.march_conan_manip() - 9")
                 march_id = conanobj.march_data['level3_marchid']
                 march_names = conanobj.march_data['level3_names']
                 march_flags = conanobj.march_data['level3_flags']
         elif conanobj.options.march_strategy == "download_or_fail":
-            self.output.info("KnuthConanFile.march_conan_manip() - 10")
+            conanobj.output.info("KnuthConanFile.march_conan_manip() - 10")
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
             march_flags = conanobj.march_data['comp_flags']
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
             if not is_superset_of(exts, level3_exts):
-                self.output.info("KnuthConanFile.march_conan_manip() - 11")
+                conanobj.output.info("KnuthConanFile.march_conan_manip() - 11")
                 return (None, None, None)
 
         conanobj.options.march_id = march_id
     else:
-        self.output.info("KnuthConanFile.march_conan_manip() - 12")
+        conanobj.output.info("KnuthConanFile.march_conan_manip() - 12")
         march_id = conanobj.options.march_id
         march_from = 'user defined'
         #TODO(fernando): check for march_id errors
 
-    self.output.info("KnuthConanFile.march_conan_manip() - 13")
+    conanobj.output.info("KnuthConanFile.march_conan_manip() - 13")
     conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from, march_id))
 
     return (march_id, march_names, march_flags)
