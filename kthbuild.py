@@ -556,6 +556,10 @@ def march_conan_manip(conanobj):
 
     conanobj.output.info("KnuthConanFile.march_conan_manip() - 4")
 
+    conanobj.output.info(f"os:               {str(conanobj.settings.os)}")
+    conanobj.output.info(f"compiler:         {str(conanobj.settings.compiler)}")
+    conanobj.output.info(f"compiler.version: {float(str(conanobj.settings.compiler.version))}")
+
     conanobj.march_data = get_all_data(str(conanobj.settings.os),
                                        str(conanobj.settings.compiler),
                                        float(str(conanobj.settings.compiler.version)))
