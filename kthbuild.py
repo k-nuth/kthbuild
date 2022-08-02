@@ -653,8 +653,8 @@ def get_requirements_from_file():
     return []
 
 class KnuthConanFile(ConanFile):
-    def __init__(self):
-        self.march_data = None
+    # def __init__(self):
+    #     self.march_data = None
 
     @property
     def conan_req_version(self):
@@ -926,7 +926,8 @@ class KnuthConanFile(ConanFile):
 
 
 # def main():
-#     print("Hello World!")
+#     cf = KnuthConanFile()
+#     cf.config_options()
 
 # if __name__ == "__main__":
 #     main()
