@@ -678,7 +678,7 @@ class KnuthConanFile(ConanFile):
     #         self.output.warn("**** The recipe does not implement the march_id option. ****")
 
     def validate(self):
-        ConanFile.validate(self)
+        # ConanFile.validate(self)
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
             raise ConanInvalidConfiguration("Conan version should be greater or equal than %s. Detected: %s." % (self.conan_req_version, conan_version))
 
