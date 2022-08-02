@@ -22,7 +22,7 @@ from subprocess import Popen, PIPE, STDOUT
 import inspect
 from collections import deque
 
-from microarch import get_all_data, is_superset_of, set_diff, extensions_to_names
+from microarch import get_all_data, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id
 
 DEFAULT_ORGANIZATION_NAME = 'k-nuth'
 DEFAULT_LOGIN_USERNAME = 'fpelliccioni'
@@ -615,33 +615,23 @@ def march_conan_manip(conanobj):
 
     return (march_id, march_names, march_flags)
 
-
 def pass_march_to_compiler(conanobj, cmake):
+    if conanobj.options.get_safe("march_id") is None:
+        return
 
-    if conanobj.options.get_safe("march_id") is not None:
-        march_id = str(conanobj.options.march_id)
-        flags = get_compiler_flags_arch_id(march_id,
-                                str(conanobj.settings.os),
-                                str(conanobj.settings.compiler),
-                                float(str(conanobj.settings.compiler.version)))
+    march_id = str(conanobj.options.march_id)
+    flags = get_compiler_flags_arch_id(march_id,
+                            str(conanobj.settings.os),
+                            str(conanobj.settings.compiler),
+                            float(str(conanobj.settings.compiler.version)))
 
-        conanobj.output.info("Compiler flags: %s" % flags)
-        conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % cmake.definitions.get("CONAN_CXX_FLAGS", ""))
-        conanobj.output.info("Prev CONAN_C_FLAGS: %s" % cmake.definitions.get("CONAN_C_FLAGS", ""))
+    conanobj.output.info("Compiler flags: %s" % flags)
+    conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % cmake.definitions.get("CONAN_CXX_FLAGS", ""))
+    conanobj.output.info("Prev CONAN_C_FLAGS: %s" % cmake.definitions.get("CONAN_C_FLAGS", ""))
 
-        cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
-        cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
+    cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
+    cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
 
-    # if conanobj.settings.compiler != "Visual Studio":
-    #     gcc_march = str(conanobj.options.microarchitecture)
-    #     cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -march=" + gcc_march
-    #     cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -march=" + gcc_march
-    # else:
-    #     ext = msvc_to_ext(str(conanobj.options.microarchitecture))
-
-    #     if ext is not None:
-    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /arch:" + ext
-    #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /arch:" + ext
 
 def get_conan_get(package, remote=None, default=None):
     try:
@@ -892,7 +882,7 @@ class KnuthConanFile(ConanFile):
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
 
         if self.options.get_safe("march_id") is not None:
-            cmake.definitions["MARCH_ID"] = self.options.march_id
+            cmake.definitions["KTH_MARCH_ID"] = self.options.march_id
 
         cmake.definitions["KTH_PROJECT_VERSION"] = self.version
 
