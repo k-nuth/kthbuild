@@ -725,11 +725,12 @@ class KnuthConanFile(ConanFile):
             if self.options.get_safe("march_id") is not None:
                 self.options.march_id = march_id
 
-            if self.options.get_safe("march_id") is not None:
-                self.output.info("Building microarchitecture ID: %s" % march_id)
-                exts = decode_extensions(march_id)
-                exts_names = extensions_to_names(exts)
-                self.output.info(", ".join(exts_names))
+            #TODO(fernando)
+            # if self.options.get_safe("march_id") is not None:
+            #     self.output.info("Building microarchitecture ID: %s" % march_id)
+            #     exts = decode_extensions(march_id)
+            #     exts_names = extensions_to_names(exts)
+            #     self.output.info(", ".join(exts_names))
 
 
     def package_id(self):
