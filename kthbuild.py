@@ -14,7 +14,7 @@ import sys
 import difflib
 import tempfile
 from conans import ConanFile, CMake
-from conans.errors import ConanException
+from conans.errors import ConanException, ConanInvalidConfiguration
 from conans.model.version import Version
 from conans import __version__ as conan_version
 
