@@ -535,14 +535,22 @@ def handle_microarchs(opt_name, microarchs, filtered_builds, settings, options, 
         opts_copy[opt_name] = ma
         filtered_builds.append([settings, opts_copy, env_vars, build_requires])
 
-
 def get_base_march_ids():
     # return ['4fZKi37a595hP']        # haswell
     level3_exts = level3_on()
     level3_marchid = encode_extensions(level3_exts)
     return [level3_marchid]
 
+def filter_marchs_tests(name, builds, test_options, march_opt=None):
+    if march_opt is None:
+        # march_opt = "%s:microarchitecture" % name
+        march_opt = "%s:march_id" % name
 
+    for b in builds:
+        options = b[1]
+        if options[march_opt] != "x86-64":
+            for to in test_options:
+                options[to] = "False"
 
 # usage:
 # conan install package -o march_id=? -o march_strategy=quick (default)
