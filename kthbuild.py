@@ -791,8 +791,14 @@ class KnuthConanFile(ConanFile):
         v = Version(str(self.settings.compiler.version))
         # if self.settings.compiler == "gcc" and self.settings.compiler.version == "4.9":
 
+        self.output.info(f"self.settings.compiler: {self.settings.compiler}")
+        self.output.info(f"v:                      {v}")
+
         if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
             for version in ("5", "6", "7", "8", "9", "10", "11", "12"):
+
+                self.output.info(f"version:                 {version}")
+
                 compatible_pkg = self.info.clone()
                 compatible_pkg.settings.compiler.version = version
                 self.compatible_packages.append(compatible_pkg)
