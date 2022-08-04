@@ -527,6 +527,23 @@ def get_builder(recipe_dir, args=None):
 
 # --------------------------------------------
 
+def handle_microarchs(opt_name, microarchs, filtered_builds, settings, options, env_vars, build_requires):
+    microarchs = list(set(microarchs))
+
+    for ma in microarchs:
+        opts_copy = copy.deepcopy(options)
+        opts_copy[opt_name] = ma
+        filtered_builds.append([settings, opts_copy, env_vars, build_requires])
+
+
+def get_base_march_ids():
+    # return ['4fZKi37a595hP']        # haswell
+    level3_exts = level3_on()
+    level3_marchid = encode_extensions(level3_exts)
+    return [level3_marchid]
+
+
+
 # usage:
 # conan install package -o march_id=? -o march_strategy=quick (default)
 # conan install package -o march_id=? -o march_strategy=optimized
@@ -538,14 +555,6 @@ def get_builder(recipe_dir, args=None):
 # -o march_from=compiler (default)
 # -o march_from=cpu
 # -o march_from=both
-
-
-def get_base_march_ids():
-    # return ['4fZKi37a595hP']        # haswell
-    level3_exts = level3_on()
-    level3_marchid = encode_extensions(level3_exts)
-    return [level3_marchid]
-
 
 def march_conan_manip(conanobj):
     if conanobj.settings.arch != "x86_64":
