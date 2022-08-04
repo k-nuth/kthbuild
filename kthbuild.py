@@ -796,12 +796,12 @@ class KnuthConanFile(ConanFile):
 
         if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
             for version in ("5", "6", "7", "8", "9", "10", "11", "12"):
-
                 self.output.info(f"version:                 {version}")
-
-                compatible_pkg = self.info.clone()
-                compatible_pkg.settings.compiler.version = version
-                self.compatible_packages.append(compatible_pkg)
+                self.output.info(f"version != v:            {version != v}")
+                if version != v:
+                    compatible_pkg = self.info.clone()
+                    compatible_pkg.settings.compiler.version = version
+                    self.compatible_packages.append(compatible_pkg)
 
         if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
             for version in ("7", "8", "9", "10", "11", "12", "13", "14"):
