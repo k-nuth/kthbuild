@@ -711,7 +711,7 @@ class KnuthConanFile(ConanFile):
                         raise ConanInvalidConfiguration(f"The detected micro-architecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
             else:
                 if self.march_data['user_marchid_valid']:
-                    raise ConanInvalidConfiguration(f"{self.options.get_safe("march_id")} is not a valid micro-architecture id (march_id option).")
+                    raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not a valid micro-architecture id (march_id option).")
 
                 exts = self.march_data['user_exts']
                 exts_filtered = self.march_data['user_exts_filtered']
@@ -719,7 +719,7 @@ class KnuthConanFile(ConanFile):
                     exts_diff = set_diff(exts, exts_filtered)
                     exts_names = extensions_to_names(exts_diff)
                     exts_str = " ".join(exts_names)
-                    raise ConanInvalidConfiguration(f"{self.options.get_safe("march_id")} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
+                    raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
 
 
     def configure(self, pure_c=False):
