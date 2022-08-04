@@ -706,7 +706,7 @@ class KnuthConanFile(ConanFile):
                     if not is_superset_of(exts, level3_exts):
                         exts_diff = set_diff(level3_exts, exts)
                         exts_names = extensions_to_names(exts_diff)
-                        exts_str = " ".join(exts_names)
+                        exts_str = ", ".join(exts_names)
                         raise ConanInvalidConfiguration(f"The detected micro-architecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
             else:
                 if not self.march_data['user_marchid_valid']:
@@ -717,7 +717,7 @@ class KnuthConanFile(ConanFile):
                 if not is_superset_of(exts_filtered, exts):
                     exts_diff = set_diff(exts, exts_filtered)
                     exts_names = extensions_to_names(exts_diff)
-                    exts_str = " ".join(exts_names)
+                    exts_str = ", ".join(exts_names)
                     raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
 
 
