@@ -549,7 +549,8 @@ def march_conan_manip(conanobj):
     if conanobj.options.get_safe("march_strategy") is None:
         return (None, None, None, None)
 
-    march_from = 'taken from cpuid'
+    conanobj.march_from_cpuid = True
+    march_from_str = 'taken from cpuid'
     march_id = None
     march_names = None
     march_flags = None
@@ -585,7 +586,8 @@ def march_conan_manip(conanobj):
         conanobj.options.march_id = march_id
     else:
         march_id = str(conanobj.options.march_id)
-        march_from = 'user defined'
+        conanobj.march_from_cpuid = False
+        march_from_str = 'user defined'
 
         conanobj.march_data = get_all_data_from_marchid(
                                         march_id,
@@ -606,9 +608,9 @@ def march_conan_manip(conanobj):
         #     march_flags = conanobj.march_data['comp_flags']
         # elif conanobj.options.march_strategy == "download_if_possible":
 
-    conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from, march_id))
+    conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from_str, march_id))
 
-    return (march_from, march_id, march_names, march_flags)
+    return (march_id, march_names, march_flags)
 
 def pass_march_to_compiler(conanobj, cmake):
     if conanobj.options.get_safe("march_id") is None:
@@ -661,9 +663,6 @@ def get_requirements_from_file():
     return []
 
 class KnuthConanFile(ConanFile):
-    # def __init__(self):
-    #     self.march_data = None
-
     @property
     def conan_req_version(self):
         return get_conan_req_version(self.recipe_dir())
@@ -686,6 +685,10 @@ class KnuthConanFile(ConanFile):
     #         self.output.warn("**** The recipe does not implement the march_id option. ****")
 
     def validate(self):
+
+        self.output.info(f"validate() self.march_data: {self.march_data}")
+        self.output.info(f"validate() self.march_from_cpuid: {self.march_from_cpuid}")
+
         # ConanFile.validate(self)
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
             raise ConanInvalidConfiguration("Conan version should be greater or equal than %s. Detected: %s." % (self.conan_req_version, conan_version))
@@ -697,14 +700,26 @@ class KnuthConanFile(ConanFile):
             if self.options.get_safe("march_strategy") is None:
                 raise ConanInvalidConfiguration("The recipe does not implement the march_strategy option.")
 
-            if self.options.march_strategy == "download_or_fail":
-                exts = conanobj.march_data['comp_exts']
-                level3_exts = conanobj.march_data['level3_exts']
-                if not is_superset_of(exts, level3_exts):
-                    exts_diff = set_diff(cpu_exts, comp_exts)
-                    exts_names = extensions_to_names(diff)
+            if self.march_from_cpuid:
+                if self.options.march_strategy == "download_or_fail":
+                    exts = self.march_data['comp_exts']
+                    level3_exts = self.march_data['level3_exts']
+                    if not is_superset_of(exts, level3_exts):
+                        exts_diff = set_diff(level3_exts, exts)
+                        exts_names = extensions_to_names(exts_diff)
+                        exts_str = " ".join(exts_names)
+                        raise ConanInvalidConfiguration(f"The detected micro-architecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
+            else:
+                if self.march_data['user_marchid_valid']:
+                    raise ConanInvalidConfiguration(f"{self.options.get_safe("march_id")} is not a valid micro-architecture id (march_id option).")
+
+                exts = self.march_data['user_exts']
+                exts_filtered = self.march_data['user_exts_filtered']
+                if not is_superset_of(exts_filtered, exts):
+                    exts_diff = set_diff(exts, exts_filtered)
+                    exts_names = extensions_to_names(exts_diff)
                     exts_str = " ".join(exts_names)
-                    raise ConanInvalidConfiguration(f"The detedted micro-architecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
+                    raise ConanInvalidConfiguration(f"{self.options.get_safe("march_id")} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
 
 
     def configure(self, pure_c=False):
@@ -727,7 +742,7 @@ class KnuthConanFile(ConanFile):
         # self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
-            (march_from, march_id, march_names, march_flags) = march_conan_manip(self)
+            (march_id, march_names, march_flags) = march_conan_manip(self)
             if march_names is not None:
                 self.output.info(f"The package is being compiled for a system that supports: {', '.join(march_names)}")
 
