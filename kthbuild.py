@@ -22,7 +22,7 @@ from subprocess import Popen, PIPE, STDOUT
 import inspect
 from collections import deque
 
-from microarch import get_all_data, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id
+from microarch import get_all_data, get_all_data_from_marchid, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id
 
 DEFAULT_ORGANIZATION_NAME = 'k-nuth'
 DEFAULT_LOGIN_USERNAME = 'fpelliccioni'
@@ -541,17 +541,13 @@ def get_builder(recipe_dir, args=None):
 
 def march_conan_manip(conanobj):
     if conanobj.settings.arch != "x86_64":
-        return (None, None, None)
+        return (None, None, None, None)
 
     if conanobj.options.get_safe("march_id") is None:
-        return (None, None, None)
+        return (None, None, None, None)
 
     if conanobj.options.get_safe("march_strategy") is None:
-        return (None, None, None)
-
-    conanobj.march_data = get_all_data(str(conanobj.settings.os),
-                                       str(conanobj.settings.compiler),
-                                       float(str(conanobj.settings.compiler.version)))
+        return (None, None, None, None)
 
     march_from = 'taken from cpuid'
     march_id = None
@@ -559,6 +555,10 @@ def march_conan_manip(conanobj):
     march_flags = None
 
     if conanobj.options.march_id == "_DUMMY_":
+        conanobj.march_data = get_all_data(str(conanobj.settings.os),
+                                        str(conanobj.settings.compiler),
+                                        float(str(conanobj.settings.compiler.version)))
+
         if conanobj.options.march_strategy == "optimized":
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
@@ -580,17 +580,35 @@ def march_conan_manip(conanobj):
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
             if not is_superset_of(exts, level3_exts):
-                return (None, None, None)
+                return (None, None, None, None)
 
         conanobj.options.march_id = march_id
     else:
-        march_id = conanobj.options.march_id
+        march_id = str(conanobj.options.march_id)
         march_from = 'user defined'
-        #TODO(fernando): check for march_id errors
+
+        conanobj.march_data = get_all_data_from_marchid(
+                                        march_id,
+                                        str(conanobj.settings.os),
+                                        str(conanobj.settings.compiler),
+                                        float(str(conanobj.settings.compiler.version)))
+
+        march_names = conanobj.march_data['user_names']
+        march_flags = conanobj.march_data['user_flags']
+
+        #TODO(fernando): marchid errors?
+        #TODO(fernando): march_strategy ??
+
+
+
+        # if conanobj.options.march_strategy == "optimized":
+        #     march_names = conanobj.march_data['comp_names']
+        #     march_flags = conanobj.march_data['comp_flags']
+        # elif conanobj.options.march_strategy == "download_if_possible":
 
     conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from, march_id))
 
-    return (march_id, march_names, march_flags)
+    return (march_from, march_id, march_names, march_flags)
 
 def pass_march_to_compiler(conanobj, cmake):
     if conanobj.options.get_safe("march_id") is None:
@@ -709,11 +727,9 @@ class KnuthConanFile(ConanFile):
         # self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
-            (march_id, march_names, march_flags) = march_conan_manip(self)
-
-            # self.output.info(f"KnuthConanFile.configure() - march_id: {march_id} - march_names: {march_names} - march_flags: {march_flags}")
-
-            self.output.info(f"The package is being compiled for a system that supports: {', '.join(march_names)}")
+            (march_from, march_id, march_names, march_flags) = march_conan_manip(self)
+            if march_names is not None:
+                self.output.info(f"The package is being compiled for a system that supports: {', '.join(march_names)}")
 
             self.options["*"].march_id = march_id
             self.options["*"].march_strategy = self.options.get_safe("march_strategy")
