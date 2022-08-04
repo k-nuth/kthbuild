@@ -809,6 +809,8 @@ class KnuthConanFile(ConanFile):
                 compatible_pkg.settings.compiler.version = version
                 self.compatible_packages.append(compatible_pkg)
 
+        self.output.info(f"compatible_packages: {self.compatible_packages}")
+
         #TODO(fernando): MSVC
 
         if self.options.get_safe("verbose") is not None:
