@@ -713,7 +713,7 @@ class KnuthConanFile(ConanFile):
 
             # self.output.info(f"KnuthConanFile.configure() - march_id: {march_id} - march_names: {march_names} - march_flags: {march_flags}")
 
-            self.output.info(f"Your system supports: {", ".join(march_names)}")
+            self.output.info(f"The package is being compiled for a system that supports: {', '.join(march_names)}")
 
             self.options["*"].march_id = march_id
             self.options["*"].march_strategy = self.options.get_safe("march_strategy")
