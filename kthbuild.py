@@ -788,6 +788,29 @@ class KnuthConanFile(ConanFile):
     def package_id(self):
         ConanFile.package_id(self)
 
+        v = Version(str(self.settings.compiler.version))
+        # if self.settings.compiler == "gcc" and self.settings.compiler.version == "4.9":
+
+        if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
+            for version in ("5", "6", "7", "8", "9", "10", "11", "12"):
+                compatible_pkg = self.info.clone()
+                compatible_pkg.settings.compiler.version = version
+                self.compatible_packages.append(compatible_pkg)
+
+        if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
+            for version in ("7", "8", "9", "10", "11", "12", "13", "14"):
+                compatible_pkg = self.info.clone()
+                compatible_pkg.settings.compiler.version = version
+                self.compatible_packages.append(compatible_pkg)
+
+        if self.settings.compiler == "apple-clang" and (v >= "13" and v <= "13"):
+            for version in ("13"):
+                compatible_pkg = self.info.clone()
+                compatible_pkg.settings.compiler.version = version
+                self.compatible_packages.append(compatible_pkg)
+
+        #TODO(fernando): MSVC
+
         if self.options.get_safe("verbose") is not None:
             self.info.options.verbose = "ANY"
 
