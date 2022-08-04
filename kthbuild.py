@@ -22,7 +22,8 @@ from subprocess import Popen, PIPE, STDOUT
 import inspect
 from collections import deque
 
-from microarch import get_all_data, get_all_data_from_marchid, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id
+from microarch import get_all_data, get_all_data_from_marchid, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id, level3_on, encode_extensions
+
 
 DEFAULT_ORGANIZATION_NAME = 'k-nuth'
 DEFAULT_LOGIN_USERNAME = 'fpelliccioni'
@@ -537,6 +538,13 @@ def get_builder(recipe_dir, args=None):
 # -o march_from=compiler (default)
 # -o march_from=cpu
 # -o march_from=both
+
+
+def get_base_march_ids():
+    # return ['4fZKi37a595hP']        # haswell
+    level3_exts = level3_on()
+    level3_marchid = encode_extensions(level3_exts)
+    return [level3_marchid]
 
 
 def march_conan_manip(conanobj):
