@@ -550,7 +550,6 @@ def march_conan_manip(conanobj):
         return (None, None, None, None)
 
     conanobj.march_from_cpuid = True
-    march_from_str = 'taken from cpuid'
     march_id = None
     march_names = None
     march_flags = None
@@ -587,7 +586,6 @@ def march_conan_manip(conanobj):
     else:
         march_id = str(conanobj.options.march_id)
         conanobj.march_from_cpuid = False
-        march_from_str = 'user defined'
 
         conanobj.march_data = get_all_data_from_marchid(
                                         march_id,
@@ -608,7 +606,10 @@ def march_conan_manip(conanobj):
         #     march_flags = conanobj.march_data['comp_flags']
         # elif conanobj.options.march_strategy == "download_if_possible":
 
-    conanobj.output.info("Detected microarchitecture ID (%s): %s" % (march_from_str, march_id))
+    if conanobj.march_from_cpuid:
+        conanobj.output.info(f"Detected microarchitecture ID: {march_id}")
+    else:
+        conanobj.output.info(f"User-defined microarchitecture ID: {march_id}")
 
     return (march_id, march_names, march_flags)
 
@@ -707,10 +708,10 @@ class KnuthConanFile(ConanFile):
                         exts_diff = set_diff(level3_exts, exts)
                         exts_names = extensions_to_names(exts_diff)
                         exts_str = ", ".join(exts_names)
-                        raise ConanInvalidConfiguration(f"The detected micro-architecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
+                        raise ConanInvalidConfiguration(f"The detected microarchitecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
             else:
                 if not self.march_data['user_marchid_valid']:
-                    raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not a valid micro-architecture id (march_id option).")
+                    raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not a valid microarchitecture id (march_id option).")
 
                 exts = self.march_data['user_exts']
                 exts_filtered = self.march_data['user_exts_filtered']
