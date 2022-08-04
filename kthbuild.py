@@ -685,9 +685,8 @@ class KnuthConanFile(ConanFile):
     #         self.output.warn("**** The recipe does not implement the march_id option. ****")
 
     def validate(self):
-
-        self.output.info(f"validate() self.march_data: {self.march_data}")
-        self.output.info(f"validate() self.march_from_cpuid: {self.march_from_cpuid}")
+        # self.output.info(f"validate() self.march_data: {self.march_data}")
+        # self.output.info(f"validate() self.march_from_cpuid: {self.march_from_cpuid}")
 
         # ConanFile.validate(self)
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
@@ -710,7 +709,7 @@ class KnuthConanFile(ConanFile):
                         exts_str = " ".join(exts_names)
                         raise ConanInvalidConfiguration(f"The detected micro-architecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
             else:
-                if self.march_data['user_marchid_valid']:
+                if not self.march_data['user_marchid_valid']:
                     raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not a valid micro-architecture id (march_id option).")
 
                 exts = self.march_data['user_exts']
