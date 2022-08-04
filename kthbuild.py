@@ -624,8 +624,8 @@ def pass_march_to_compiler(conanobj, cmake):
                             float(str(conanobj.settings.compiler.version)))
 
     conanobj.output.info("Compiler flags: %s" % flags)
-    conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % cmake.definitions.get("CONAN_CXX_FLAGS", ""))
-    conanobj.output.info("Prev CONAN_C_FLAGS: %s" % cmake.definitions.get("CONAN_C_FLAGS", ""))
+    # conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % cmake.definitions.get("CONAN_CXX_FLAGS", ""))
+    # conanobj.output.info("Prev CONAN_C_FLAGS: %s" % cmake.definitions.get("CONAN_C_FLAGS", ""))
 
     cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
     cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
