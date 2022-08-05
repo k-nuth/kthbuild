@@ -600,12 +600,29 @@ def march_conan_manip(conanobj):
                 march_flags = conanobj.march_data['level3_flags']
         elif conanobj.options.march_strategy == "download_or_fail":
             conanobj.output.info(f"download_or_fail {conanobj.march_data}")
+
+
+            # {
+            # 'cpu_exts': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            # 'cpu_marchid': 'sLToxj7js6LYD3KuVaPN',
+            # 'cpu_names': ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'SGX', 'AES', 'XGETBV_ECX1', 'INVPCID'],
+            # 'comp_exts': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            # 'comp_marchid': '3bXSaBmtnZFdifSL',
+            # 'comp_names': ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'SGX', 'AES'],
+            # 'comp_flags': '-m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave -mpclmul -mfsgsbase -mrdrnd -mrdseed -madx -mprfchw -mclflushopt -mxsaveopt -mxsavec -mxsaves -msgx -maes',
+            # 'level3_exts': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            # 'level3_marchid': 'ZLm9Pjh',
+            # 'level3_names': ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE'],
+            # 'level3_flags': '-m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave'
+            # }
+
+
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
             march_flags = conanobj.march_data['comp_flags']
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
-            if not is_superset_of(exts, level3_exts):
+            if not is_superset_of(level3_exts, exts):
                 return (None, None, None, None)
 
         conanobj.options.march_id = march_id
@@ -751,8 +768,8 @@ class KnuthConanFile(ConanFile):
                 if self.options.march_strategy == "download_or_fail":
                     exts = self.march_data['comp_exts']
                     level3_exts = self.march_data['level3_exts']
-                    if not is_superset_of(exts, level3_exts):
-                        exts_diff = set_diff(level3_exts, exts)
+                    if not is_superset_of(level3_exts, exts):
+                        exts_diff = set_diff(exts, level3_exts)
                         exts_names = extensions_to_names(exts_diff)
                         exts_str = ", ".join(exts_names)
                         raise ConanInvalidConfiguration(f"The detected microarchitecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
