@@ -715,8 +715,22 @@ class KnuthConanFile(ConanFile):
         # self.output.info(f"validate() self.march_from_cpuid: {self.march_from_cpuid}")
 
         # ConanFile.validate(self)
+
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
             raise ConanInvalidConfiguration("Conan version should be greater or equal than %s. Detected: %s." % (self.conan_req_version, conan_version))
+
+        v = Version(str(self.settings.compiler.version))
+        if self.settings.compiler == 'apple-clang' and v < "13":
+            raise ConanInvalidConfiguration(f"apple-clang {v} not supported, you need to install apple-clang >= 13.")
+
+        if self.settings.compiler == 'clang' and v < "7":
+            raise ConanInvalidConfiguration(f"Clang {v} not supported, you need to install Clang >= 7.")
+
+        if self.settings.compiler == 'gcc' and v < "5":
+            raise ConanInvalidConfiguration(f"GCC {v} not supported, you need to install GCC >= 5.")
+
+        if self.settings.compiler == "Visual Studio":
+            raise ConanInvalidConfiguration(f"MSVC is not supported.")
 
         if self.settings.arch == "x86_64":
             if self.options.get_safe("march_id") is None:
@@ -791,8 +805,8 @@ class KnuthConanFile(ConanFile):
         v = Version(str(self.settings.compiler.version))
         # if self.settings.compiler == "gcc" and self.settings.compiler.version == "4.9":
 
-        self.output.info(f"self.settings.compiler: {self.settings.compiler}")
-        self.output.info(f"v:                      {v}")
+        # self.output.info(f"self.settings.compiler: {self.settings.compiler}")
+        # self.output.info(f"v:                      {v}")
 
         # # if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
         # #     for version in ("5", "6", "7", "8", "9", "10", "11", "12"):
@@ -812,22 +826,28 @@ class KnuthConanFile(ConanFile):
         #             compatible_pkg.settings.compiler.version = version
         #             self.compatible_packages.append(compatible_pkg)
 
-        if self.settings.compiler == "gcc" and (v >= "11" and v <= "12"):
-            self.info.settings.compiler.version = "GCC versions [11,12]"
+        # if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
+        #     for version in ("7", "8", "9", "10", "11", "12", "13", "14"):
+        #         compatible_pkg = self.info.clone()
+        #         compatible_pkg.settings.compiler.version = version
+        #         self.compatible_packages.append(compatible_pkg)
+
+        # if self.settings.compiler == "apple-clang" and (v >= "13" and v <= "13"):
+        #     for version in ("13"):
+        #         compatible_pkg = self.info.clone()
+        #         compatible_pkg.settings.compiler.version = version
+        #         self.compatible_packages.append(compatible_pkg)
+
+        if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
+            self.info.settings.compiler.version = "GCC [5, 12]"
 
         if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
-            for version in ("7", "8", "9", "10", "11", "12", "13", "14"):
-                compatible_pkg = self.info.clone()
-                compatible_pkg.settings.compiler.version = version
-                self.compatible_packages.append(compatible_pkg)
+            self.info.settings.compiler.version = "Clang [7, 14]"
 
         if self.settings.compiler == "apple-clang" and (v >= "13" and v <= "13"):
-            for version in ("13"):
-                compatible_pkg = self.info.clone()
-                compatible_pkg.settings.compiler.version = version
-                self.compatible_packages.append(compatible_pkg)
+            self.info.settings.compiler.version = "apple-clang [13, 13]"
 
-        self.output.info(f"compatible_packages: {self.compatible_packages}")
+        # self.output.info(f"compatible_packages: {self.compatible_packages}")
 
         #TODO(fernando): MSVC
 
