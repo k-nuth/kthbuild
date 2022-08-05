@@ -967,7 +967,7 @@ class KnuthConanFile(ConanFile):
             cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
 
         if self.options.get_safe("march_id") is not None:
-            cmake.definitions["KTH_MARCH_ID"] = self.options.march_id
+            cmake.definitions["MARCH_ID"] = self.options.march_id
 
         cmake.definitions["KTH_PROJECT_VERSION"] = self.version
 
