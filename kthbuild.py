@@ -736,6 +736,9 @@ class KnuthConanFile(ConanFile):
         if self.settings.compiler == "Visual Studio":
             raise ConanInvalidConfiguration(f"MSVC is not supported.")
 
+        if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
+            raise ConanInvalidConfiguration("We just support GCC C++11ABI.\n**** Please run `conan profile update settings.compiler.libcxx=libstdc++11 default`")
+
         if self.settings.arch == "x86_64":
             if self.options.get_safe("march_id") is None:
                 raise ConanInvalidConfiguration("The recipe does not implement the march_id option.")
