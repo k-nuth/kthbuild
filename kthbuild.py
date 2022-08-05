@@ -612,6 +612,10 @@ def march_conan_manip(conanobj):
         march_id = str(conanobj.options.march_id)
         conanobj.march_from_cpuid = False
 
+        if march_id == "x86-64-v3":
+            march_id = get_base_march_ids()[0]
+            conanobj.output.info(f"x86-64-v3 microarchitecture ID is translated to {march_id}")
+
         conanobj.march_data = get_all_data_from_marchid(
                                         march_id,
                                         str(conanobj.settings.os),
