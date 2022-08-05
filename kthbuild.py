@@ -599,6 +599,7 @@ def march_conan_manip(conanobj):
                 march_names = conanobj.march_data['level3_names']
                 march_flags = conanobj.march_data['level3_flags']
         elif conanobj.options.march_strategy == "download_or_fail":
+            conanobj.output.info(f"download_or_fail {conanobj.march_data}")
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
             march_flags = conanobj.march_data['comp_flags']
