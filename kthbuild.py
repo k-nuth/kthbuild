@@ -617,13 +617,14 @@ def march_conan_manip(conanobj):
             # }
 
 
-            march_id = conanobj.march_data['comp_marchid']
-            march_names = conanobj.march_data['comp_names']
-            march_flags = conanobj.march_data['comp_flags']
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
-            if not is_superset_of(level3_exts, exts):
+            if not is_superset_of(exts, level3_exts):
                 return (None, None, None)
+            march_id = conanobj.march_data['level3_marchid']
+            march_names = conanobj.march_data['level3_names']
+            march_flags = conanobj.march_data['level3_flags']
+
 
         conanobj.options.march_id = march_id
     else:
@@ -768,8 +769,8 @@ class KnuthConanFile(ConanFile):
                 if self.options.march_strategy == "download_or_fail":
                     exts = self.march_data['comp_exts']
                     level3_exts = self.march_data['level3_exts']
-                    if not is_superset_of(level3_exts, exts):
-                        exts_diff = set_diff(exts, level3_exts)
+                    if not is_superset_of(exts, level3_exts):
+                        exts_diff = set_diff(level3_exts, exts)
                         exts_names = extensions_to_names(exts_diff)
                         exts_str = ", ".join(exts_names)
                         raise ConanInvalidConfiguration(f"The detected microarchitecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
