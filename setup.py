@@ -12,7 +12,7 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "1.0.36"
+__version__ = "1.0.37"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -21,7 +21,7 @@ __copyright__ = "Copyright (c) 2019-2022 Knuth Project"
 
 install_requires = [
     "conan >= 1.51.0",
-    "microarch >= 0.0.5",
+    "microarch >= 0.0.6",
 ]
 
 def running_in_cpt_context():
