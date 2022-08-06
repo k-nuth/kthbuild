@@ -566,13 +566,13 @@ def filter_marchs_tests(name, builds, test_options, march_opt=None):
 
 def march_conan_manip(conanobj):
     if conanobj.settings.arch != "x86_64":
-        return (None, None, None, None)
+        return (None, None, None)
 
     if conanobj.options.get_safe("march_id") is None:
-        return (None, None, None, None)
+        return (None, None, None)
 
     if conanobj.options.get_safe("march_strategy") is None:
-        return (None, None, None, None)
+        return (None, None, None)
 
     conanobj.march_from_cpuid = True
     march_id = None
@@ -623,7 +623,7 @@ def march_conan_manip(conanobj):
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
             if not is_superset_of(level3_exts, exts):
-                return (None, None, None, None)
+                return (None, None, None)
 
         conanobj.options.march_id = march_id
     else:
