@@ -22,7 +22,7 @@ from subprocess import Popen, PIPE, STDOUT
 import inspect
 from collections import deque
 
-from microarch import get_all_data, get_all_data_from_marchid, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id, level3_on, encode_extensions
+from microarch import get_all_data, get_all_data_from_marchid, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id, level0_on, level1_on, level2_on, level3_on, encode_extensions
 
 
 DEFAULT_ORGANIZATION_NAME = 'k-nuth'
@@ -537,9 +537,23 @@ def handle_microarchs(opt_name, microarchs, filtered_builds, settings, options, 
 
 def get_base_march_ids():
     # return ['4fZKi37a595hP']        # haswell
-    level3_exts = level3_on()
-    level3_marchid = encode_extensions(level3_exts)
-    return [level3_marchid]
+    return [level3_marchid()]
+
+def level3_marchid():
+    exts = level3_on()
+    return encode_extensions(exts)
+
+def level2_marchid():
+    exts = level2_on()
+    return encode_extensions(exts)
+
+def level1_marchid():
+    exts = level1_on()
+    return encode_extensions(exts)
+
+def level0_marchid():
+    exts = level0_on()
+    return encode_extensions(exts)
 
 def filter_marchs_tests(name, builds, test_options, march_opt=None):
     if march_opt is None:
@@ -585,6 +599,22 @@ def march_conan_manip(conanobj):
                                         float(str(conanobj.settings.compiler.version)))
 
         if conanobj.options.march_strategy == "optimized":
+            conanobj.output.info(f"Using an instruction set/extensions optimized for your platform (CPU, OS, Compiler)")
+
+            level3_exts = conanobj.march_data['level3_exts']
+            exts = conanobj.march_data['comp_exts']
+
+            if is_superset_of(exts, level3_exts):
+                exts_diff = set_diff(exts, level3_exts)
+                exts_names = extensions_to_names(exts_diff)
+                exts_str = ", ".join(exts_names)
+                conanobj.output.info(f"Your platform is a is better than the reference platform (x86-64-v3) since it has the following set of instructions that the reference does not have: {exts_str}.")
+            else:
+                exts_diff = set_diff(level3_exts, exts)
+                exts_names = extensions_to_names(exts_diff)
+                exts_str = ", ".join(exts_names)
+                conanobj.output.warn(f"Your platform is not compatible the reference platform (x86-64-v3).\nThe following extensions are not supported by your platform: {exts_str}.")
+
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
             march_flags = conanobj.march_data['comp_flags']
@@ -594,37 +624,42 @@ def march_conan_manip(conanobj):
             march_flags = conanobj.march_data['comp_flags']
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
+
             if is_superset_of(exts, level3_exts):
                 march_id = conanobj.march_data['level3_marchid']
                 march_names = conanobj.march_data['level3_names']
                 march_flags = conanobj.march_data['level3_flags']
+
+                exts_diff = set_diff(exts, level3_exts)
+                exts_names = extensions_to_names(exts_diff)
+                exts_str = ", ".join(exts_names)
+                conanobj.output.info(f"Your platform is a is better than the reference platform (x86-64-v3) since it has the following set of instructions that the reference does not have: {exts_str}.")
+                conanobj.output.info(f"Even though your platform is better than the reference platform, the package you are downloading was compiled for the reference platform (it is less optimized).\nIf you want to take advantage of the full power of your platform, you must execute the conan command using -o march_strategy = optimized.")
+
+            else:
+                exts_diff = set_diff(level3_exts, exts)
+                exts_names = extensions_to_names(exts_diff)
+                exts_str = ", ".join(exts_names)
+                conanobj.output.warn(f"Your platform is not compatible the reference platform (x86-64-v3).\nThe following extensions are not supported by your platform: {exts_str}.")
+
         elif conanobj.options.march_strategy == "download_or_fail":
-            conanobj.output.info(f"download_or_fail {conanobj.march_data}")
-
-
-            # {
-            # 'cpu_exts': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            # 'cpu_marchid': 'sLToxj7js6LYD3KuVaPN',
-            # 'cpu_names': ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'SGX', 'AES', 'XGETBV_ECX1', 'INVPCID'],
-            # 'comp_exts': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            # 'comp_marchid': '3bXSaBmtnZFdifSL',
-            # 'comp_names': ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE', 'PCLMUL', 'FSGSBASE', 'RDRND', 'RDSEED', 'ADX', 'PREFETCHW', 'CLFLUSHOPT', 'XSAVEOPT', 'XSAVEC', 'XSAVES', 'SGX', 'AES'],
-            # 'comp_flags': '-m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave -mpclmul -mfsgsbase -mrdrnd -mrdseed -madx -mprfchw -mclflushopt -mxsaveopt -mxsavec -mxsaves -msgx -maes',
-            # 'level3_exts': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            # 'level3_marchid': 'ZLm9Pjh',
-            # 'level3_names': ['64 bits', 'CMOV', 'CX8', 'FPU', 'FXSR', 'MMX', 'SCE', 'SSE', 'SSE2', 'CX16', 'LAHF-SAHF', 'POPCNT', 'SSE3', 'SSE4.1', 'SSE4.2', 'SSSE3', 'AVX', 'AVX2', 'BMI1', 'BMI2', 'F16C', 'FMA', 'LZCNT ABM', 'MOVBE', 'XSAVE'],
-            # 'level3_flags': '-m64 -mfxsr -mmmx -msse -msse2 -mcx16 -msahf -mpopcnt -msse3 -msse4.1 -msse4.2 -mssse3 -mavx -mavx2 -mbmi -mbmi2 -mf16c -mfma -mlzcnt -mabm -mmovbe -mxsave'
-            # }
-
+            # conanobj.output.info(f"download_or_fail {conanobj.march_data}")
 
             exts = conanobj.march_data['comp_exts']
             level3_exts = conanobj.march_data['level3_exts']
+
             if not is_superset_of(exts, level3_exts):
                 return (None, None, None)
+
+            exts_diff = set_diff(exts, level3_exts)
+            exts_names = extensions_to_names(exts_diff)
+            exts_str = ", ".join(exts_names)
+            conanobj.output.info(f"Your platform is a is better than the reference platform (x86-64-v3) since it has the following set of instructions that the reference does not have: {exts_str}.")
+            conanobj.output.info(f"Even though your platform is better than the reference platform, the package you are downloading was compiled for the reference platform (it is less optimized).\nIf you want to take advantage of the full power of your platform, you must execute the conan command using -o march_strategy = optimized.")
+
             march_id = conanobj.march_data['level3_marchid']
             march_names = conanobj.march_data['level3_names']
             march_flags = conanobj.march_data['level3_flags']
-
 
         conanobj.options.march_id = march_id
     else:
@@ -632,8 +667,20 @@ def march_conan_manip(conanobj):
         conanobj.march_from_cpuid = False
 
         if march_id == "x86-64-v3":
-            march_id = get_base_march_ids()[0]
+            march_id = level3_marchid()
             conanobj.output.info(f"x86-64-v3 microarchitecture ID is translated to {march_id}")
+        elif march_id == "x86-64-v2":
+            march_id = level2_marchid()
+            conanobj.output.info(f"x86-64-v2 microarchitecture ID is translated to {march_id}")
+        elif march_id == "x86-64-v1":
+            march_id = level1_marchid()
+            conanobj.output.info(f"x86-64-v1 microarchitecture ID is translated to {march_id}")
+        elif march_id == "x86-64-v0":
+            march_id = level0_marchid()
+            conanobj.output.info(f"x86-64-v0 microarchitecture ID is translated to {march_id}")
+        elif march_id == "x86-64":
+            march_id = level0_marchid()
+            conanobj.output.info(f"x86-64 microarchitecture ID is translated to {march_id}")
 
         conanobj.march_data = get_all_data_from_marchid(
                                         march_id,
@@ -773,7 +820,7 @@ class KnuthConanFile(ConanFile):
                         exts_diff = set_diff(level3_exts, exts)
                         exts_names = extensions_to_names(exts_diff)
                         exts_str = ", ".join(exts_names)
-                        raise ConanInvalidConfiguration(f"The detected microarchitecture of your system is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your system: {exts_str}.\nThis error is generated because you chose march_strategy = download_or_fail.")
+                        raise ConanInvalidConfiguration(f"The detected microarchitecture of your platform is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your platform: {exts_str}.\nThis error is generated because you chose -o march_strategy = download_or_fail.")
             else:
                 if not self.march_data['user_marchid_valid']:
                     raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not a valid microarchitecture id (march_id option).")
@@ -809,7 +856,7 @@ class KnuthConanFile(ConanFile):
         if self.settings.arch == "x86_64":
             (march_id, march_names, march_flags) = march_conan_manip(self)
             if march_names is not None:
-                self.output.info(f"The package is being compiled for a system that supports: {', '.join(march_names)}")
+                self.output.info(f"The package is being compiled for a platform that supports: {', '.join(march_names)}")
 
             self.options["*"].march_id = march_id
             self.options["*"].march_strategy = self.options.get_safe("march_strategy")
