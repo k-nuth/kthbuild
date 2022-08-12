@@ -634,7 +634,7 @@ def march_conan_manip(conanobj):
                 exts_names = extensions_to_names(exts_diff)
                 exts_str = ", ".join(exts_names)
                 conanobj.output.info(f"Your platform is a is better than the reference platform (x86-64-v3) since it has the following set of instructions that the reference does not have: {exts_str}.")
-                conanobj.output.info(f"Even though your platform is better than the reference platform, the package you are downloading was compiled for the reference platform (it is less optimized).\nIf you want to take advantage of the full power of your platform, you must execute the conan command using -o march_strategy = optimized.")
+                conanobj.output.info(f"Even though your platform is better than the reference platform, the package you are downloading was compiled for the reference platform (it is less optimized).\nIf you want to take advantage of the full power of your platform, you must execute the conan command using -o march_strategy=optimized.")
 
             else:
                 exts_diff = set_diff(level3_exts, exts)
@@ -655,7 +655,7 @@ def march_conan_manip(conanobj):
             exts_names = extensions_to_names(exts_diff)
             exts_str = ", ".join(exts_names)
             conanobj.output.info(f"Your platform is a is better than the reference platform (x86-64-v3) since it has the following set of instructions that the reference does not have: {exts_str}.")
-            conanobj.output.info(f"Even though your platform is better than the reference platform, the package you are downloading was compiled for the reference platform (it is less optimized).\nIf you want to take advantage of the full power of your platform, you must execute the conan command using -o march_strategy = optimized.")
+            conanobj.output.info(f"Even though your platform is better than the reference platform, the package you are downloading was compiled for the reference platform (it is less optimized).\nIf you want to take advantage of the full power of your platform, you must execute the conan command using -o march_strategy=optimized.")
 
             march_id = conanobj.march_data['level3_marchid']
             march_names = conanobj.march_data['level3_names']
@@ -790,17 +790,18 @@ class KnuthConanFile(ConanFile):
             raise ConanInvalidConfiguration("Conan version should be greater or equal than %s. Detected: %s." % (self.conan_req_version, conan_version))
 
         v = Version(str(self.settings.compiler.version))
-        if self.settings.compiler == 'apple-clang' and v < "13":
+        if self.settings.compiler == "apple-clang" and v < "13":
             raise ConanInvalidConfiguration(f"apple-clang {v} not supported, you need to install apple-clang >= 13.")
 
-        if self.settings.compiler == 'clang' and v < "7":
+        if self.settings.compiler == "clang" and v < "7":
             raise ConanInvalidConfiguration(f"Clang {v} not supported, you need to install Clang >= 7.")
 
-        if self.settings.compiler == 'gcc' and v < "5":
+        if self.settings.compiler == "gcc" and v < "5":
             raise ConanInvalidConfiguration(f"GCC {v} not supported, you need to install GCC >= 5.")
 
-        if self.settings.compiler == "Visual Studio":
-            raise ConanInvalidConfiguration(f"MSVC is not supported.")
+        #TODO(fernando): proper versions of Visual Studio and MSVC
+        if self.settings.compiler == "Visual Studio" and v < "16":
+            raise ConanInvalidConfiguration(f"Visual Studio (MSVC) {v} not supported, you need to install Visual Studio >= 16.")
 
         if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
             raise ConanInvalidConfiguration("We just support GCC C++11ABI.\n**** Please run `conan profile update settings.compiler.libcxx=libstdc++11 default`")
@@ -820,7 +821,7 @@ class KnuthConanFile(ConanFile):
                         exts_diff = set_diff(level3_exts, exts)
                         exts_names = extensions_to_names(exts_diff)
                         exts_str = ", ".join(exts_names)
-                        raise ConanInvalidConfiguration(f"The detected microarchitecture of your platform is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your platform: {exts_str}.\nThis error is generated because you chose -o march_strategy = download_or_fail.")
+                        raise ConanInvalidConfiguration(f"The detected microarchitecture of your platform is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your platform: {exts_str}.\nThis error is generated because you chose -o march_strategy=download_or_fail.")
             else:
                 if not self.march_data['user_marchid_valid']:
                     raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not a valid microarchitecture id (march_id option).")
@@ -911,8 +912,13 @@ class KnuthConanFile(ConanFile):
         #         compatible_pkg.settings.compiler.version = version
         #         self.compatible_packages.append(compatible_pkg)
 
-        if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
-            self.info.settings.compiler.version = "GCC [5, 12]"
+        # if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
+        #     self.info.settings.compiler.version = "GCC [5, 12]"
+
+        if self.settings.compiler == "gcc" and (v >= "11"):
+            self.info.settings.compiler.version = "GCC >= 11"
+        else:
+            self.info.settings.compiler.version = "GCC < 11"
 
         if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
             self.info.settings.compiler.version = "Clang [7, 14]"
