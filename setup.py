@@ -21,7 +21,7 @@ __copyright__ = "Copyright (c) 2019-2022 Knuth Project"
 
 install_requires = [
     "conan >= 1.51.0",
-    "microarch >= 0.0.7",
+    "microarch >= 0.0.8",
 ]
 
 def running_in_cpt_context():
