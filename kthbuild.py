@@ -22,14 +22,13 @@ from subprocess import Popen, PIPE, STDOUT
 import inspect
 from collections import deque
 
-from microarch import get_all_data, get_all_data_from_marchid, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id, level0_on, level1_on, level2_on, level3_on, encode_extensions
-
+if platform.machine() == 'x86_64':
+    from microarch import get_all_data, get_all_data_from_marchid, is_superset_of, set_diff, extensions_to_names, get_compiler_flags_arch_id, level0_on, level1_on, level2_on, level3_on, encode_extensions
 
 DEFAULT_ORGANIZATION_NAME = 'k-nuth'
 DEFAULT_LOGIN_USERNAME = 'fpelliccioni'
 DEFAULT_USERNAME = 'kth'
 DEFAULT_REPOSITORY = 'kth'
-
 
 def get_tempfile_name():
     return os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
