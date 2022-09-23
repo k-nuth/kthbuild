@@ -8,6 +8,7 @@ from setuptools import setup
 from setuptools.command.install import install
 import subprocess
 import os
+import platform
 
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
