@@ -12,7 +12,7 @@ import os
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -20,9 +20,11 @@ __copyright__ = "Copyright (c) 2019-2022 Knuth Project"
 
 
 install_requires = [
-    "conan >= 1.51.0",
-    "microarch >= 0.0.8",
+    "conan >= 1.52.0",
 ]
+
+if platform.machine() == 'x86_64':
+    install_requires.append("microarch >= 0.0.8")
 
 def running_in_cpt_context():
     # -e CONAN_UPLOAD="https://knuth.jfrog.io/artifactory/api/conan/knuth@True@upload_repo"
