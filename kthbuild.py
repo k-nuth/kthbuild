@@ -593,6 +593,8 @@ def march_conan_manip(conanobj):
     march_flags = None
 
     if conanobj.options.march_id == "_DUMMY_":
+        march_kth_defs = None
+
         conanobj.march_data = get_all_data(str(conanobj.settings.os),
                                         str(conanobj.settings.compiler),
                                         float(str(conanobj.settings.compiler.version)))
