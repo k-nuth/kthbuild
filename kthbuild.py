@@ -689,10 +689,10 @@ def march_conan_manip(conanobj):
 
         march_names = conanobj.march_data['user_names']
         march_flags = conanobj.march_data['user_flags']
+        march_kth_defs = conanobj.march_data['user_kth_defs']
 
         #TODO(fernando): marchid errors?
         #TODO(fernando): march_strategy ??
-
 
 
         # if conanobj.options.march_strategy == "optimized":
@@ -705,7 +705,7 @@ def march_conan_manip(conanobj):
     else:
         conanobj.output.info(f"User-defined microarchitecture ID: {march_id}")
 
-    return (march_id, march_names, march_flags)
+    return (march_id, march_names, march_flags, march_kth_defs)
 
 def pass_march_to_compiler(conanobj, cmake):
     if conanobj.options.get_safe("march_id") is None:
@@ -724,6 +724,10 @@ def pass_march_to_compiler(conanobj, cmake):
     cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
     cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
 
+    if self.settings.compiler == "Visual Studio":
+        cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % self.march_names_full_str
+    else:
+        cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % self.march_names_full_str
 
 def get_conan_get(package, remote=None, default=None):
     try:
@@ -854,9 +858,10 @@ class KnuthConanFile(ConanFile):
         # self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
-            (march_id, march_names, march_flags) = march_conan_manip(self)
+            (march_id, march_names, march_flags, march_kth_defs) = march_conan_manip(self)
             if march_names is not None:
-                self.output.info(f"The package is being compiled for a platform that supports: {', '.join(march_names)}")
+                self.march_names_full_str = ', '.join(march_names)
+                self.output.info(f"The package is being compiled for a platform that supports: {self.march_names_full_str}")
 
             self.options["*"].march_id = march_id
             self.options["*"].march_strategy = self.options.get_safe("march_strategy")
