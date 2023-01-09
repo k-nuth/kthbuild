@@ -726,13 +726,13 @@ def pass_march_to_compiler(conanobj, cmake):
     cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
     cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
 
-    if conanobj.march_names_full_str is not None:
-        if conanobj.settings.compiler == "Visual Studio":
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-            cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-        else:
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-            cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    # if conanobj.march_names_full_str is not None:
+    #     if conanobj.settings.compiler == "Visual Studio":
+    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #     else:
+    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
 
 def get_conan_get(package, remote=None, default=None):
     try:
@@ -1049,6 +1049,18 @@ class KnuthConanFile(ConanFile):
 
         if self.options.get_safe("march_id") is not None:
             cmake.definitions["MARCH_ID"] = self.options.march_id
+
+
+        cmake.definitions["MARCH_NAMES_FULL_STR"] = self.march_names_full_str
+
+        # if conanobj.march_names_full_str is not None:
+        #     if conanobj.settings.compiler == "Visual Studio":
+        #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+        #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+        #     else:
+        #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+        #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+
 
         cmake.definitions["KTH_PROJECT_VERSION"] = self.version
 
