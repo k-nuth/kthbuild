@@ -924,16 +924,27 @@ class KnuthConanFile(ConanFile):
         # if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
         #     self.info.settings.compiler.version = "GCC [5, 12]"
 
-        if self.settings.compiler == "gcc" and (v >= "11"):
-            self.info.settings.compiler.version = "GCC >= 11"
-        else:
-            self.info.settings.compiler.version = "GCC < 11"
+        if self.settings.compiler == "gcc":
+            if v >= "12":
+                self.info.settings.compiler.version = "GCC >= 12"
+            else:
+                self.info.settings.compiler.version = "GCC < 12"
 
-        if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
-            self.info.settings.compiler.version = "Clang [7, 14]"
+        if self.settings.compiler == "clang":
+            if v >= "7" and v <= "15":
+                self.info.settings.compiler.version = "Clang [7, 15]"
+            elif v > "15":
+                self.info.settings.compiler.version = "Clang > 15"
+            else:
+                self.info.settings.compiler.version = "Clang < 7"
 
-        if self.settings.compiler == "apple-clang" and (v >= "13" and v <= "13"):
-            self.info.settings.compiler.version = "apple-clang [13, 13]"
+        if self.settings.compiler == "apple-clang":
+            if (v >= "14" and v <= "14"):
+                self.info.settings.compiler.version = "apple-clang [14, 14]"
+            elif v > "14":
+                self.info.settings.compiler.version = "apple-clang > 14"
+            else:
+                self.info.settings.compiler.version = "apple-clang < 14"
 
         # self.output.info(f"compatible_packages: {self.compatible_packages}")
 
