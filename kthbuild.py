@@ -795,7 +795,7 @@ class KnuthConanFile(ConanFile):
     #     if self.settings.arch == "x86_64" and self.options.get_safe("march_id") is None:
     #         self.output.warn("**** The recipe does not implement the march_id option. ****")
 
-    def validate(self):
+    def validate(self, pure_c=False):
         # self.output.info(f"validate() self.march_data: {self.march_data}")
         # self.output.info(f"validate() self.march_from_cpuid: {self.march_from_cpuid}")
 
@@ -818,8 +818,9 @@ class KnuthConanFile(ConanFile):
         if self.settings.compiler == "Visual Studio" and v < "16":
             raise ConanInvalidConfiguration(f"Visual Studio (MSVC) {v} not supported, you need to install Visual Studio >= 16.")
 
-        if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
-            raise ConanInvalidConfiguration("We just support GCC C++11ABI.\n**** Please run `conan profile update settings.compiler.libcxx=libstdc++11 default`")
+        if not pure_c:
+            if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
+                raise ConanInvalidConfiguration("We just support GCC C++11ABI.\n**** Please run `conan profile update settings.compiler.libcxx=libstdc++11 default`")
 
         if self.settings.arch == "x86_64":
             if self.options.get_safe("march_id") is None:
