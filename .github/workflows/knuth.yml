@@ -22,7 +22,8 @@ jobs:
           pip install wheel --upgrade
           pip install twine --upgrade
           pip install cpuid --upgrade
-          pip install conan --upgrade
+          # pip install conan --upgrade
+          pip install "conan>=1.50.0,<2.0" --upgrade
           pip install setuptools --upgrade
         shell: bash
 

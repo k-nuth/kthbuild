@@ -19,6 +19,7 @@ import tempfile
 # from conans.model.version import Version
 # from conans import __version__ as conan_version
 
+from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
 from conan.errors import ConanException, ConanInvalidConfiguration
 from conan.tools.scm import Version
