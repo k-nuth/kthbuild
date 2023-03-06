@@ -1229,6 +1229,340 @@ class KnuthConanFile(ConanFile):
             return get_user(self.recipe_dir())
 
 
+class KnuthConanFileV2(ConanFile):
+    def config_options(self):
+        ConanFile.config_options(self)
+
+        if self.settings.arch != "x86_64":
+            self.output.info("march_id is disabled for architectures other than x86_64, your architecture: %s" % (self.settings.arch,))
+            self.options.remove("march_id")
+            self.options.remove("march_strategy")
+
+        if self.settings.compiler == "Visual Studio":
+            self.options.remove("fPIC")
+            if self.is_shared:
+                self.options.remove("shared")
+
+    def validate(self, pure_c=False):
+        # self.output.info(f"validate() self.march_data: {self.march_data}")
+        # self.output.info(f"validate() self.march_from_cpuid: {self.march_from_cpuid}")
+
+        # ConanFile.validate(self)
+
+        v = Version(str(self.settings.compiler.version))
+        if self.settings.compiler == "apple-clang" and v < "13":
+            raise ConanInvalidConfiguration(f"apple-clang {v} not supported, you need to install apple-clang >= 13.")
+
+        if self.settings.compiler == "clang" and v < "7":
+            raise ConanInvalidConfiguration(f"Clang {v} not supported, you need to install Clang >= 7.")
+
+        if self.settings.compiler == "gcc" and v < "5":
+            raise ConanInvalidConfiguration(f"GCC {v} not supported, you need to install GCC >= 5.")
+
+        #TODO(fernando): proper versions of Visual Studio and MSVC
+        if self.settings.compiler == "Visual Studio" and v < "16":
+            raise ConanInvalidConfiguration(f"Visual Studio (MSVC) {v} not supported, you need to install Visual Studio >= 16.")
+
+        if not pure_c:
+            if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
+                raise ConanInvalidConfiguration("We just support GCC C++11ABI.\n**** Please run `conan profile update settings.compiler.libcxx=libstdc++11 default`")
+
+        if self.settings.arch == "x86_64":
+            if self.options.get_safe("march_id") is None:
+                raise ConanInvalidConfiguration("The recipe does not implement the march_id option.")
+
+            if self.options.get_safe("march_strategy") is None:
+                raise ConanInvalidConfiguration("The recipe does not implement the march_strategy option.")
+
+            if self.march_from_cpuid:
+                if self.options.march_strategy == "download_or_fail":
+                    exts = self.march_data['comp_exts']
+                    level3_exts = self.march_data['level3_exts']
+                    if not is_superset_of(exts, level3_exts):
+                        exts_diff = set_diff(level3_exts, exts)
+                        exts_names = extensions_to_names(exts_diff)
+                        exts_str = ", ".join(exts_names)
+                        raise ConanInvalidConfiguration(f"The detected microarchitecture of your platform is not compatible with x86-64-v3 (Check https://en.wikipedia.org/wiki/X86-64#Microarchitecture_levels).\nThe following extensions are not supported by your platform: {exts_str}.\nThis error is generated because you chose -o march_strategy=download_or_fail.")
+            else:
+                if not self.march_data['user_marchid_valid']:
+                    raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not a valid microarchitecture id (march_id option).")
+
+                exts = self.march_data['user_exts']
+                exts_filtered = self.march_data['user_exts_filtered']
+                if not is_superset_of(exts_filtered, exts):
+                    exts_diff = set_diff(exts, exts_filtered)
+                    exts_names = extensions_to_names(exts_diff)
+                    exts_str = ", ".join(exts_names)
+                    raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
+
+    def configure(self, pure_c=False):
+        ConanFile.configure(self)
+
+        if pure_c:
+            del self.settings.compiler.libcxx               #Pure-C Library
+
+        if self.options.get_safe("currency") is not None:
+            self.options["*"].currency = self.options.currency
+            self.output.info("Compiling for currency: %s" % (self.options.currency,))
+
+        if self.options.get_safe("db") is not None:
+            self.options["*"].db = self.options.db
+            self.output.info("Compiling for DB: %s" % (self.options.db,))
+
+        # self._warn_missing_options()
+
+        if self.settings.arch == "x86_64":
+            (march_id, march_names, march_flags, march_kth_defs) = march_conan_manip(self)
+            if march_names is not None:
+                self.march_names_full_str = ', '.join(march_names)
+                self.output.info(f"The package is being compiled for a platform that supports: {self.march_names_full_str}")
+
+            self.options["*"].march_id = march_id
+            self.options["*"].march_strategy = self.options.get_safe("march_strategy")
+
+            if self.options.get_safe("march_id") is not None:
+                self.options.march_id = march_id
+
+            #TODO(fernando)
+            # if self.options.get_safe("march_id") is not None:
+            #     self.output.info("Building microarchitecture ID: %s" % march_id)
+            #     exts = decode_extensions(march_id)
+            #     exts_names = extensions_to_names(exts)
+            #     self.output.info(", ".join(exts_names))
+
+    def package_id(self):
+        ConanFile.package_id(self)
+
+        v = Version(str(self.settings.compiler.version))
+        # if self.settings.compiler == "gcc" and self.settings.compiler.version == "4.9":
+
+        # self.output.info(f"self.settings.compiler: {self.settings.compiler}")
+        # self.output.info(f"v:                      {v}")
+
+        # # if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
+        # #     for version in ("5", "6", "7", "8", "9", "10", "11", "12"):
+        # #         self.output.info(f"version:                 {version}")
+        # #         self.output.info(f"version != v:            {version != v}")
+        # #         if version != v:
+        # #             compatible_pkg = self.info.clone()
+        # #             compatible_pkg.settings.compiler.version = version
+        # #             self.compatible_packages.append(compatible_pkg)
+
+        # if self.settings.compiler == "gcc" and (v >= "11" and v <= "12"):
+        #     for version in ("11", "12"):
+        #         self.output.info(f"version:                 {version}")
+        #         self.output.info(f"version != v:            {version != v}")
+        #         if version != v:
+        #             compatible_pkg = self.info.clone()
+        #             compatible_pkg.settings.compiler.version = version
+        #             self.compatible_packages.append(compatible_pkg)
+
+        # if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
+        #     for version in ("7", "8", "9", "10", "11", "12", "13", "14"):
+        #         compatible_pkg = self.info.clone()
+        #         compatible_pkg.settings.compiler.version = version
+        #         self.compatible_packages.append(compatible_pkg)
+
+        # if self.settings.compiler == "apple-clang" and (v >= "13" and v <= "13"):
+        #     for version in ("13"):
+        #         compatible_pkg = self.info.clone()
+        #         compatible_pkg.settings.compiler.version = version
+        #         self.compatible_packages.append(compatible_pkg)
+
+        # if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
+        #     self.info.settings.compiler.version = "GCC [5, 12]"
+
+        if self.settings.compiler == "gcc":
+            if v >= "12":
+                self.info.settings.compiler.version = "GCC >= 12"
+            else:
+                self.info.settings.compiler.version = "GCC < 12"
+
+        if self.settings.compiler == "clang":
+            if v >= "7" and v <= "15":
+                self.info.settings.compiler.version = "Clang [7, 15]"
+            elif v > "15":
+                self.info.settings.compiler.version = "Clang > 15"
+            else:
+                self.info.settings.compiler.version = "Clang < 7"
+
+        if self.settings.compiler == "apple-clang":
+            if (v >= "14" and v <= "14"):
+                self.info.settings.compiler.version = "apple-clang [14, 14]"
+            elif v > "14":
+                self.info.settings.compiler.version = "apple-clang > 14"
+            else:
+                self.info.settings.compiler.version = "apple-clang < 14"
+
+        # self.output.info(f"compatible_packages: {self.compatible_packages}")
+
+        #TODO(fernando): MSVC
+
+        if self.options.get_safe("verbose") is not None:
+            self.info.options.verbose = "ANY"
+
+        if self.options.get_safe("cxxflags") is not None:
+            self.info.options.cxxflags = "ANY"
+
+        if self.options.get_safe("cflags") is not None:
+            self.info.options.cflags = "ANY"
+
+        if self.options.get_safe("tests") is not None:
+            self.info.options.tests = "ANY"
+
+        if self.options.get_safe("tools") is not None:
+            self.info.options.tools = "ANY"
+
+        if self.options.get_safe("examples") is not None:
+            self.info.options.examples = "ANY"
+
+        if self.options.get_safe("cmake_export_compile_commands") is not None:
+            self.info.options.cmake_export_compile_commands = "ANY"
+
+        if self.options.get_safe("march_strategy") is not None:
+            self.info.options.march_strategy = "ANY"
+
+    def _cmake_database(self, tc):
+        if self.options.get_safe("db") is None:
+            return
+
+        if self.options.db == "legacy":
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(True)
+            tc.variables["DB_LEGACY"] = option_on_off(True)
+            tc.variables["DB_NEW"] = option_on_off(False)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "legacy_full":
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(True)
+            tc.variables["DB_SPENDS"] = option_on_off(True)
+            tc.variables["DB_HISTORY"] = option_on_off(True)
+            tc.variables["DB_STEALTH"] = option_on_off(True)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(True)
+            tc.variables["DB_LEGACY"] = option_on_off(True)
+            tc.variables["DB_NEW"] = option_on_off(False)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "pruned":
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+            tc.variables["DB_LEGACY"] = option_on_off(False)
+            tc.variables["DB_NEW"] = option_on_off(True)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "default":
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+            tc.variables["DB_LEGACY"] = option_on_off(False)
+            tc.variables["DB_NEW"] = option_on_off(True)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(True)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
+        elif self.options.db == "full":
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+            tc.variables["DB_LEGACY"] = option_on_off(False)
+            tc.variables["DB_NEW"] = option_on_off(True)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(True)
+
+    def cmake_toolchain_basis(self, pure_c=False):
+        tc = CMakeToolchain(self)
+        tc.variables["USE_CONAN"] = option_on_off(True)
+        tc.variables["NO_CONAN_AT_ALL"] = option_on_off(False)
+        # cmake.verbose = self.options.verbose
+        tc.variables["ENABLE_SHARED"] = option_on_off(self.is_shared)
+        tc.variables["ENABLE_POSITION_INDEPENDENT_CODE"] = option_on_off(self.fPIC_enabled)
+
+        if self.options.get_safe("tests") is not None:
+            tc.variables["WITH_TESTS"] = option_on_off(self.options.tests)
+            tc.variables["WITH_TESTS_NEW"] = option_on_off(self.options.tests)
+
+        if self.options.get_safe("examples") is not None:
+            tc.variables["WITH_EXAMPLES"] = option_on_off(self.options.examples)
+
+        if self.options.get_safe("tools") is not None:
+            tc.variables["WITH_TOOLS"] = option_on_off(self.options.tools)
+
+        if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
+            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
+        if self.options.get_safe("cflags") is not None and self.options.cflags != "_DUMMY_":
+            tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
+
+        if self.settings.compiler != "Visual Studio":
+            # tc.variables["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
+            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
+        if self.settings.compiler == "Visual Studio":
+            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+
+        if self.options.get_safe("march_id") is not None:
+            tc.variables["MARCH_ID"] = self.options.march_id
+
+
+        tc.variables["MARCH_NAMES_FULL_STR"] = self.march_names_full_str
+
+        tc.variables["KTH_PROJECT_VERSION"] = self.version
+
+        if self.options.get_safe("currency") is not None:
+            tc.variables["CURRENCY"] = self.options.currency
+
+        self._cmake_database(tc)
+
+        if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
+            tc.variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
+
+        if not pure_c:
+            if self.settings.compiler == "gcc":
+                if float(str(self.settings.compiler.version)) >= 5:
+                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
+                else:
+                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(True)
+            elif self.settings.compiler == "clang":
+                if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
+
+        pass_march_to_compiler(self, tc)
+        # self.output.info("CONAN_CXX_FLAGS: %s" % (tc.variables["CONAN_CXX_FLAGS"], ))
+        # self.output.info("cmake.command_line: %s" % (cmake.command_line, ))
+        return tc
+
+    @property
+    def msvc_mt_build(self):
+        # return "MT" in str(self.settings.compiler.runtime)
+        return "MT" in str(self.settings.get_safe("compiler.runtime"))
+
+    @property
+    def fPIC_enabled(self):
+        if self.options.get_safe("fPIC") is None:
+            return False
+
+        if self.settings.compiler == "Visual Studio":
+            return False
+
+        return self.options.fPIC
+
+    @property
+    def is_shared(self):
+        if self.options.get_safe("shared") is None:
+            return False
+
+        if self.options.shared and self.msvc_mt_build:
+            return False
+        else:
+            return self.options.shared
+
+
 # def main():
 #     cf = KnuthConanFile()
 #     cf.config_options()
