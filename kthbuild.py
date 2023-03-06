@@ -13,10 +13,16 @@ import subprocess
 import sys
 import difflib
 import tempfile
-from conans import ConanFile, CMake
-from conans.errors import ConanException, ConanInvalidConfiguration
-from conans.model.version import Version
-from conans import __version__ as conan_version
+
+# from conans import ConanFile, CMake
+# from conans.errors import ConanException, ConanInvalidConfiguration
+# from conans.model.version import Version
+# from conans import __version__ as conan_version
+
+from conan.tools.cmake import CMake, CMakeDeps, CMakeToolchain, cmake_layout
+from conan.errors import ConanException, ConanInvalidConfiguration
+from conan.tools.scm import Version
+from conan import __version__ as conan_version
 
 from subprocess import Popen, PIPE, STDOUT
 import inspect
@@ -709,7 +715,7 @@ def march_conan_manip(conanobj):
 
     return (march_id, march_names, march_flags, march_kth_defs)
 
-def pass_march_to_compiler(conanobj, cmake):
+def pass_march_to_compiler(conanobj, tc):
     if conanobj.options.get_safe("march_id") is None:
         return
 
@@ -720,19 +726,19 @@ def pass_march_to_compiler(conanobj, cmake):
                             float(str(conanobj.settings.compiler.version)))
 
     conanobj.output.info("Compiler flags: %s" % flags)
-    # conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % cmake.definitions.get("CONAN_CXX_FLAGS", ""))
-    # conanobj.output.info("Prev CONAN_C_FLAGS: %s" % cmake.definitions.get("CONAN_C_FLAGS", ""))
+    # conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % tc.variables.get("CONAN_CXX_FLAGS", ""))
+    # conanobj.output.info("Prev CONAN_C_FLAGS: %s" % tc.variables.get("CONAN_C_FLAGS", ""))
 
-    cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + flags
-    cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + flags
+    tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + flags
+    tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + flags
 
     # if conanobj.march_names_full_str is not None:
     #     if conanobj.settings.compiler == "Visual Studio":
-    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-    #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #         tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #         tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
     #     else:
-    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-    #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #         tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #         tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
 
 def get_conan_get(package, remote=None, default=None):
     try:
@@ -974,129 +980,204 @@ class KnuthConanFile(ConanFile):
         if self.options.get_safe("march_strategy") is not None:
             self.info.options.march_strategy = "ANY"
 
-    def _cmake_database(self, cmake):
+    def _cmake_database(self, tc):
         if self.options.get_safe("db") is None:
             return
 
         if self.options.db == "legacy":
-            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
-            cmake.definitions["DB_SPENDS"] = option_on_off(False)
-            cmake.definitions["DB_HISTORY"] = option_on_off(False)
-            cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(True)
-            cmake.definitions["DB_LEGACY"] = option_on_off(True)
-            cmake.definitions["DB_NEW"] = option_on_off(False)
-            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
-            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(True)
+            tc.variables["DB_LEGACY"] = option_on_off(True)
+            tc.variables["DB_NEW"] = option_on_off(False)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
         elif self.options.db == "legacy_full":
-            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(True)
-            cmake.definitions["DB_SPENDS"] = option_on_off(True)
-            cmake.definitions["DB_HISTORY"] = option_on_off(True)
-            cmake.definitions["DB_STEALTH"] = option_on_off(True)
-            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(True)
-            cmake.definitions["DB_LEGACY"] = option_on_off(True)
-            cmake.definitions["DB_NEW"] = option_on_off(False)
-            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
-            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(True)
+            tc.variables["DB_SPENDS"] = option_on_off(True)
+            tc.variables["DB_HISTORY"] = option_on_off(True)
+            tc.variables["DB_STEALTH"] = option_on_off(True)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(True)
+            tc.variables["DB_LEGACY"] = option_on_off(True)
+            tc.variables["DB_NEW"] = option_on_off(False)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
         elif self.options.db == "pruned":
-            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
-            cmake.definitions["DB_SPENDS"] = option_on_off(False)
-            cmake.definitions["DB_HISTORY"] = option_on_off(False)
-            cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(False)
-            cmake.definitions["DB_LEGACY"] = option_on_off(False)
-            cmake.definitions["DB_NEW"] = option_on_off(True)
-            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
-            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+            tc.variables["DB_LEGACY"] = option_on_off(False)
+            tc.variables["DB_NEW"] = option_on_off(True)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
         elif self.options.db == "default":
-            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
-            cmake.definitions["DB_SPENDS"] = option_on_off(False)
-            cmake.definitions["DB_HISTORY"] = option_on_off(False)
-            cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(False)
-            cmake.definitions["DB_LEGACY"] = option_on_off(False)
-            cmake.definitions["DB_NEW"] = option_on_off(True)
-            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(True)
-            cmake.definitions["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+            tc.variables["DB_LEGACY"] = option_on_off(False)
+            tc.variables["DB_NEW"] = option_on_off(True)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(True)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
         elif self.options.db == "full":
-            cmake.definitions["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
-            cmake.definitions["DB_SPENDS"] = option_on_off(False)
-            cmake.definitions["DB_HISTORY"] = option_on_off(False)
-            cmake.definitions["DB_STEALTH"] = option_on_off(False)
-            cmake.definitions["DB_UNSPENT_LEGACY"] = option_on_off(False)
-            cmake.definitions["DB_LEGACY"] = option_on_off(False)
-            cmake.definitions["DB_NEW"] = option_on_off(True)
-            cmake.definitions["DB_NEW_BLOCKS"] = option_on_off(False)
-            cmake.definitions["DB_NEW_FULL"] = option_on_off(True)
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+            tc.variables["DB_LEGACY"] = option_on_off(False)
+            tc.variables["DB_NEW"] = option_on_off(True)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(True)
 
-    def cmake_basis(self, pure_c=False):
-        cmake = CMake(self)
-        cmake.definitions["USE_CONAN"] = option_on_off(True)
-        cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
-        cmake.verbose = self.options.verbose
-        cmake.definitions["ENABLE_SHARED"] = option_on_off(self.is_shared)
-        cmake.definitions["ENABLE_POSITION_INDEPENDENT_CODE"] = option_on_off(self.fPIC_enabled)
+    # def cmake_basis(self, pure_c=False):
+    #     cmake = CMake(self)
+    #     cmake.definitions["USE_CONAN"] = option_on_off(True)
+    #     cmake.definitions["NO_CONAN_AT_ALL"] = option_on_off(False)
+    #     cmake.verbose = self.options.verbose
+    #     cmake.definitions["ENABLE_SHARED"] = option_on_off(self.is_shared)
+    #     cmake.definitions["ENABLE_POSITION_INDEPENDENT_CODE"] = option_on_off(self.fPIC_enabled)
+
+    #     if self.options.get_safe("tests") is not None:
+    #         cmake.definitions["WITH_TESTS"] = option_on_off(self.options.tests)
+    #         cmake.definitions["WITH_TESTS_NEW"] = option_on_off(self.options.tests)
+
+    #     if self.options.get_safe("examples") is not None:
+    #         cmake.definitions["WITH_EXAMPLES"] = option_on_off(self.options.examples)
+
+    #     if self.options.get_safe("tools") is not None:
+    #         cmake.definitions["WITH_TOOLS"] = option_on_off(self.options.tools)
+
+    #     if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
+    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
+    #     if self.options.get_safe("cflags") is not None and self.options.cflags != "_DUMMY_":
+    #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
+
+    #     if self.settings.compiler != "Visual Studio":
+    #         # cmake.definitions["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
+    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
+    #     if self.settings.compiler == "Visual Studio":
+    #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+
+    #     if self.options.get_safe("march_id") is not None:
+    #         cmake.definitions["MARCH_ID"] = self.options.march_id
+
+
+    #     cmake.definitions["MARCH_NAMES_FULL_STR"] = self.march_names_full_str
+
+    #     # if conanobj.march_names_full_str is not None:
+    #     #     if conanobj.settings.compiler == "Visual Studio":
+    #     #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #     #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #     #     else:
+    #     #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+    #     #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+
+
+    #     cmake.definitions["KTH_PROJECT_VERSION"] = self.version
+
+    #     if self.options.get_safe("currency") is not None:
+    #         cmake.definitions["CURRENCY"] = self.options.currency
+
+    #     self._cmake_database(cmake)
+
+    #     if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
+    #         cmake.definitions["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
+
+    #     if not pure_c:
+    #         if self.settings.compiler == "gcc":
+    #             if float(str(self.settings.compiler.version)) >= 5:
+    #                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+    #             else:
+    #                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
+    #         elif self.settings.compiler == "clang":
+    #             if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+    #                 cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+
+    #     pass_march_to_compiler(self, cmake)
+    #     # self.output.info("CONAN_CXX_FLAGS: %s" % (cmake.definitions["CONAN_CXX_FLAGS"], ))
+    #     # self.output.info("cmake.command_line: %s" % (cmake.command_line, ))
+    #     return cmake
+
+
+    tc = CMakeToolchain(self)
+    # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
+
+    tc.variables["ENABLE_BENCHMARK"] = option_on_off(self.options.benchmark)
+
+    def cmake_toolchain_basis(self, pure_c=False):
+        tc = CMakeToolchain(self)
+        tc.variables["USE_CONAN"] = option_on_off(True)
+        tc.variables["NO_CONAN_AT_ALL"] = option_on_off(False)
+        # cmake.verbose = self.options.verbose
+        tc.variables["ENABLE_SHARED"] = option_on_off(self.is_shared)
+        tc.variables["ENABLE_POSITION_INDEPENDENT_CODE"] = option_on_off(self.fPIC_enabled)
 
         if self.options.get_safe("tests") is not None:
-            cmake.definitions["WITH_TESTS"] = option_on_off(self.options.tests)
-            cmake.definitions["WITH_TESTS_NEW"] = option_on_off(self.options.tests)
+            tc.variables["WITH_TESTS"] = option_on_off(self.options.tests)
+            tc.variables["WITH_TESTS_NEW"] = option_on_off(self.options.tests)
 
         if self.options.get_safe("examples") is not None:
-            cmake.definitions["WITH_EXAMPLES"] = option_on_off(self.options.examples)
+            tc.variables["WITH_EXAMPLES"] = option_on_off(self.options.examples)
 
         if self.options.get_safe("tools") is not None:
-            cmake.definitions["WITH_TOOLS"] = option_on_off(self.options.tools)
+            tc.variables["WITH_TOOLS"] = option_on_off(self.options.tools)
 
         if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
+            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
         if self.options.get_safe("cflags") is not None and self.options.cflags != "_DUMMY_":
-            cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
+            tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
 
         if self.settings.compiler != "Visual Studio":
-            # cmake.definitions["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
+            # tc.variables["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
+            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
         if self.settings.compiler == "Visual Studio":
-            cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
 
         if self.options.get_safe("march_id") is not None:
-            cmake.definitions["MARCH_ID"] = self.options.march_id
+            tc.variables["MARCH_ID"] = self.options.march_id
 
 
-        cmake.definitions["MARCH_NAMES_FULL_STR"] = self.march_names_full_str
+        tc.variables["MARCH_NAMES_FULL_STR"] = self.march_names_full_str
 
         # if conanobj.march_names_full_str is not None:
         #     if conanobj.settings.compiler == "Visual Studio":
-        #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-        #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+        #         tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+        #         tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
         #     else:
-        #         cmake.definitions["CONAN_CXX_FLAGS"] = cmake.definitions.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-        #         cmake.definitions["CONAN_C_FLAGS"] = cmake.definitions.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+        #         tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
+        #         tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
 
 
-        cmake.definitions["KTH_PROJECT_VERSION"] = self.version
+        tc.variables["KTH_PROJECT_VERSION"] = self.version
 
         if self.options.get_safe("currency") is not None:
-            cmake.definitions["CURRENCY"] = self.options.currency
+            tc.variables["CURRENCY"] = self.options.currency
 
-        self._cmake_database(cmake)
+        self._cmake_database(tc)
 
         if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
-            cmake.definitions["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
+            tc.variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
 
         if not pure_c:
             if self.settings.compiler == "gcc":
                 if float(str(self.settings.compiler.version)) >= 5:
-                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
                 else:
-                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(True)
+                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(True)
             elif self.settings.compiler == "clang":
                 if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
-                    cmake.definitions["NOT_USE_CPP11_ABI"] = option_on_off(False)
+                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
-        pass_march_to_compiler(self, cmake)
-        # self.output.info("CONAN_CXX_FLAGS: %s" % (cmake.definitions["CONAN_CXX_FLAGS"], ))
+        pass_march_to_compiler(self, tc)
+        # self.output.info("CONAN_CXX_FLAGS: %s" % (tc.variables["CONAN_CXX_FLAGS"], ))
         # self.output.info("cmake.command_line: %s" % (cmake.command_line, ))
-        return cmake
+        return tc
 
 
     def add_reqs(self, reqs):
