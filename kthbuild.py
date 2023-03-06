@@ -1105,12 +1105,6 @@ class KnuthConanFile(ConanFile):
     #     # self.output.info("cmake.command_line: %s" % (cmake.command_line, ))
     #     return cmake
 
-
-    tc = CMakeToolchain(self)
-    # tc.variables["CMAKE_VERBOSE_MAKEFILE"] = True
-
-    tc.variables["ENABLE_BENCHMARK"] = option_on_off(self.options.benchmark)
-
     def cmake_toolchain_basis(self, pure_c=False):
         tc = CMakeToolchain(self)
         tc.variables["USE_CONAN"] = option_on_off(True)
