@@ -799,7 +799,7 @@ class KnuthConanFile(ConanFile):
         # self.output.info(f"validate() self.march_data: {self.march_data}")
         # self.output.info(f"validate() self.march_from_cpuid: {self.march_from_cpuid}")
 
-        # ConanFile.validate(self)
+        ConanFile.validate(self)
 
         if self.conan_req_version != None and Version(conan_version) < Version(self.conan_req_version):
             raise ConanInvalidConfiguration("Conan version should be greater or equal than %s. Detected: %s." % (self.conan_req_version, conan_version))
@@ -1231,7 +1231,7 @@ class KnuthConanFile(ConanFile):
 
 class KnuthConanFileV2(ConanFile):
     def config_options(self):
-        ConanFile.config_options(self)
+        # ConanFile.config_options(self)
 
         if self.settings.arch != "x86_64":
             self.output.info("march_id is disabled for architectures other than x86_64, your architecture: %s" % (self.settings.arch,))
@@ -1296,7 +1296,7 @@ class KnuthConanFileV2(ConanFile):
                     raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
 
     def configure(self, pure_c=False):
-        ConanFile.configure(self)
+        # ConanFile.configure(self)
 
         if pure_c:
             del self.settings.compiler.libcxx               #Pure-C Library
@@ -1331,7 +1331,7 @@ class KnuthConanFileV2(ConanFile):
             #     self.output.info(", ".join(exts_names))
 
     def package_id(self):
-        ConanFile.package_id(self)
+        # ConanFile.package_id(self)
 
         v = Version(str(self.settings.compiler.version))
         # if self.settings.compiler == "gcc" and self.settings.compiler.version == "4.9":
