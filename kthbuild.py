@@ -1228,7 +1228,7 @@ class KnuthConanFile(ConanFile):
         except ConanException:
             return get_user(self.recipe_dir())
 
-
+# ------------------------------------------------------------------------------
 class KnuthConanFileV2(ConanFile):
     def config_options(self):
         # ConanFile.config_options(self)
@@ -1238,7 +1238,7 @@ class KnuthConanFileV2(ConanFile):
             self.options.remove("march_id")
             self.options.remove("march_strategy")
 
-        if self.settings.compiler == "Visual Studio":
+        if self.settings.compiler == "msvc":
             self.options.remove("fPIC")
             if self.is_shared:
                 self.options.remove("shared")
@@ -1259,9 +1259,9 @@ class KnuthConanFileV2(ConanFile):
         if self.settings.compiler == "gcc" and v < "5":
             raise ConanInvalidConfiguration(f"GCC {v} not supported, you need to install GCC >= 5.")
 
-        #TODO(fernando): proper versions of Visual Studio and MSVC
-        if self.settings.compiler == "Visual Studio" and v < "16":
-            raise ConanInvalidConfiguration(f"Visual Studio (MSVC) {v} not supported, you need to install Visual Studio >= 16.")
+        #TODO(fernando): proper versions of MSVC
+        if self.settings.compiler == "msvc" and v < "16":
+            raise ConanInvalidConfiguration(f"Visual Studio (MSVC) {v} not supported, you need to install MSVC >= 16.")
 
         if not pure_c:
             if self.settings.os == "Linux" and self.settings.compiler == "gcc" and self.settings.compiler.libcxx == "libstdc++":
@@ -1500,10 +1500,10 @@ class KnuthConanFileV2(ConanFile):
         if self.options.get_safe("cflags") is not None and self.options.cflags != "_DUMMY_":
             tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
 
-        if self.settings.compiler != "Visual Studio":
+        if self.settings.compiler != "msvc":
             # tc.variables["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
             tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
-        if self.settings.compiler == "Visual Studio":
+        if self.settings.compiler == "msvc":
             tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
 
         if self.options.get_safe("march_id") is not None:
@@ -1547,7 +1547,7 @@ class KnuthConanFileV2(ConanFile):
         if self.options.get_safe("fPIC") is None:
             return False
 
-        if self.settings.compiler == "Visual Studio":
+        if self.settings.compiler == "msvc":
             return False
 
         return self.options.fPIC
