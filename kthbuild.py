@@ -1317,7 +1317,9 @@ class KnuthConanFileV2(ConanFile):
                 self.march_names_full_str = ', '.join(march_names)
                 self.output.info(f"The package is being compiled for a platform that supports: {self.march_names_full_str}")
 
+            self.output.info("BEFORE")
             self.options["*"].march_id = march_id
+            self.output.info("AFTER")
             self.options["*"].march_strategy = self.options.get_safe("march_strategy")
             # if self.options.get_safe("march_id") is not None:
             #     self.options.march_id = march_id
