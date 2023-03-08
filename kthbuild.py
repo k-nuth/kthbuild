@@ -1296,6 +1296,7 @@ class KnuthConanFileV2(ConanFile):
                     raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
 
     def configure(self, pure_c=False):
+        self.output.info("KnuthConanFileV2.configure() 1")
         # ConanFile.configure(self)
 
         if pure_c:
@@ -1305,21 +1306,27 @@ class KnuthConanFileV2(ConanFile):
             self.options["*"].currency = self.options.currency
             self.output.info("Compiling for currency: %s" % (self.options.currency,))
 
+        self.output.info("KnuthConanFileV2.configure() 2")
+
         if self.options.get_safe("db") is not None:
             self.options["*"].db = self.options.db
             self.output.info("Compiling for DB: %s" % (self.options.db,))
 
+        self.output.info("KnuthConanFileV2.configure() 3")
         # self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
+            self.output.info("KnuthConanFileV2.configure() 4")
             (march_id, march_names, march_flags, march_kth_defs) = march_conan_manip(self)
+            self.output.info("KnuthConanFileV2.configure() 5")
             if march_names is not None:
+                self.output.info("KnuthConanFileV2.configure() 6")
                 self.march_names_full_str = ', '.join(march_names)
                 self.output.info(f"The package is being compiled for a platform that supports: {self.march_names_full_str}")
 
-            self.output.info("BEFORE")
+            self.output.info("KnuthConanFileV2.configure() 7")
             self.options["*"].march_id = march_id
-            self.output.info("AFTER")
+            self.output.info("KnuthConanFileV2.configure() 8")
             self.options["*"].march_strategy = self.options.get_safe("march_strategy")
             # if self.options.get_safe("march_id") is not None:
             #     self.options.march_id = march_id
