@@ -1296,8 +1296,6 @@ class KnuthConanFileV2(ConanFile):
                     raise ConanInvalidConfiguration(f"{self.options.get_safe('march_id')} is not compatible with your compiler.\nThe following extensions are not supported by your compiler: {exts_str}.")
 
     def configure(self, pure_c=False):
-        # self.output.info("KnuthConanFileV2.configure() 1")
-
         if pure_c:
             del self.settings.compiler.libcxx               #Pure-C Library
 
@@ -1305,27 +1303,19 @@ class KnuthConanFileV2(ConanFile):
             self.options["*"].currency = self.options.currency
             self.output.info("Compiling for currency: %s" % (self.options.currency,))
 
-        # self.output.info("KnuthConanFileV2.configure() 2")
-
         if self.options.get_safe("db") is not None:
             self.options["*"].db = self.options.db
             self.output.info("Compiling for DB: %s" % (self.options.db,))
 
-        # self.output.info("KnuthConanFileV2.configure() 3")
         # self._warn_missing_options()
 
         if self.settings.arch == "x86_64":
-            # self.output.info("KnuthConanFileV2.configure() 4")
             (march_id, march_names, march_flags, march_kth_defs) = march_conan_manip(self)
-            # self.output.info("KnuthConanFileV2.configure() 5")
             if march_names is not None:
-                # self.output.info("KnuthConanFileV2.configure() 6")
                 self.march_names_full_str = ', '.join(march_names)
                 self.output.info(f"The package is being compiled for a platform that supports: {self.march_names_full_str}")
 
-            # self.output.info("KnuthConanFileV2.configure() 7")
             self.options["*"].march_id = march_id
-            # self.output.info("KnuthConanFileV2.configure() 8")
             self.options["*"].march_strategy = self.options.get_safe("march_strategy")
             # if self.options.get_safe("march_id") is not None:
             #     self.options.march_id = march_id
@@ -1340,13 +1330,13 @@ class KnuthConanFileV2(ConanFile):
     def package_id(self):
         # ConanFile.package_id(self)
 
-        v = Version(str(self.settings.compiler.version))
-        # if self.settings.compiler == "gcc" and self.settings.compiler.version == "4.9":
+        v = Version(str(self.info.settings.compiler.version))
+        # if self.info.settings.compiler == "gcc" and self.info.settings.compiler.version == "4.9":
 
-        # self.output.info(f"self.settings.compiler: {self.settings.compiler}")
+        # self.output.info(f"self.info.settings.compiler: {self.info.settings.compiler}")
         # self.output.info(f"v:                      {v}")
 
-        # # if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
+        # # if self.info.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
         # #     for version in ("5", "6", "7", "8", "9", "10", "11", "12"):
         # #         self.output.info(f"version:                 {version}")
         # #         self.output.info(f"version != v:            {version != v}")
@@ -1355,7 +1345,7 @@ class KnuthConanFileV2(ConanFile):
         # #             compatible_pkg.settings.compiler.version = version
         # #             self.compatible_packages.append(compatible_pkg)
 
-        # if self.settings.compiler == "gcc" and (v >= "11" and v <= "12"):
+        # if self.info.settings.compiler == "gcc" and (v >= "11" and v <= "12"):
         #     for version in ("11", "12"):
         #         self.output.info(f"version:                 {version}")
         #         self.output.info(f"version != v:            {version != v}")
@@ -1364,28 +1354,28 @@ class KnuthConanFileV2(ConanFile):
         #             compatible_pkg.settings.compiler.version = version
         #             self.compatible_packages.append(compatible_pkg)
 
-        # if self.settings.compiler == "clang" and (v >= "7" and v <= "14"):
+        # if self.info.settings.compiler == "clang" and (v >= "7" and v <= "14"):
         #     for version in ("7", "8", "9", "10", "11", "12", "13", "14"):
         #         compatible_pkg = self.info.clone()
         #         compatible_pkg.settings.compiler.version = version
         #         self.compatible_packages.append(compatible_pkg)
 
-        # if self.settings.compiler == "apple-clang" and (v >= "13" and v <= "13"):
+        # if self.info.settings.compiler == "apple-clang" and (v >= "13" and v <= "13"):
         #     for version in ("13"):
         #         compatible_pkg = self.info.clone()
         #         compatible_pkg.settings.compiler.version = version
         #         self.compatible_packages.append(compatible_pkg)
 
-        # if self.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
+        # if self.info.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
         #     self.info.settings.compiler.version = "GCC [5, 12]"
 
-        if self.settings.compiler == "gcc":
+        if self.info.settings.compiler == "gcc":
             if v >= "12":
                 self.info.settings.compiler.version = "GCC >= 12"
             else:
                 self.info.settings.compiler.version = "GCC < 12"
 
-        if self.settings.compiler == "clang":
+        if self.info.settings.compiler == "clang":
             if v >= "7" and v <= "15":
                 self.info.settings.compiler.version = "Clang [7, 15]"
             elif v > "15":
@@ -1393,7 +1383,7 @@ class KnuthConanFileV2(ConanFile):
             else:
                 self.info.settings.compiler.version = "Clang < 7"
 
-        if self.settings.compiler == "apple-clang":
+        if self.info.settings.compiler == "apple-clang":
             if (v >= "14" and v <= "14"):
                 self.info.settings.compiler.version = "apple-clang [14, 14]"
             elif v > "14":
@@ -1405,28 +1395,28 @@ class KnuthConanFileV2(ConanFile):
 
         #TODO(fernando): MSVC
 
-        if self.options.get_safe("verbose") is not None:
+        if self.info.options.get_safe("verbose") is not None:
             self.info.options.verbose = "ANY"
 
-        if self.options.get_safe("cxxflags") is not None:
+        if self.info.options.get_safe("cxxflags") is not None:
             self.info.options.cxxflags = "ANY"
 
-        if self.options.get_safe("cflags") is not None:
+        if self.info.options.get_safe("cflags") is not None:
             self.info.options.cflags = "ANY"
 
-        if self.options.get_safe("tests") is not None:
+        if self.info.options.get_safe("tests") is not None:
             self.info.options.tests = "ANY"
 
-        if self.options.get_safe("tools") is not None:
+        if self.info.options.get_safe("tools") is not None:
             self.info.options.tools = "ANY"
 
-        if self.options.get_safe("examples") is not None:
+        if self.info.options.get_safe("examples") is not None:
             self.info.options.examples = "ANY"
 
-        if self.options.get_safe("cmake_export_compile_commands") is not None:
+        if self.info.options.get_safe("cmake_export_compile_commands") is not None:
             self.info.options.cmake_export_compile_commands = "ANY"
 
-        if self.options.get_safe("march_strategy") is not None:
+        if self.info.options.get_safe("march_strategy") is not None:
             self.info.options.march_strategy = "ANY"
 
     def _cmake_database(self, tc):
