@@ -727,19 +727,10 @@ def pass_march_to_compiler(conanobj, tc):
                             float(str(conanobj.settings.compiler.version)))
 
     conanobj.output.info("Compiler flags: %s" % flags)
-    # conanobj.output.info("Prev CONAN_CXX_FLAGS: %s" % tc.variables.get("CONAN_CXX_FLAGS", ""))
-    # conanobj.output.info("Prev CONAN_C_FLAGS: %s" % tc.variables.get("CONAN_C_FLAGS", ""))
 
-    tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + flags
-    tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + flags
+    # tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + flags
+    # tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + flags
 
-    # if conanobj.march_names_full_str is not None:
-    #     if conanobj.settings.compiler == "Visual Studio":
-    #         tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-    #         tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " /DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-    #     else:
-    #         tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
-    #         tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " -DKTH_MARCH_NAMES_FULL_STR=\\\"%s\\\"" % conanobj.march_names_full_str
 
 def get_conan_get(package, remote=None, default=None):
     try:
@@ -1492,16 +1483,16 @@ class KnuthConanFileV2(ConanFile):
         if self.options.get_safe("tools") is not None:
             tc.variables["WITH_TOOLS"] = option_on_off(self.options.tools)
 
-        if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
-            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
-        if self.options.get_safe("cflags") is not None and self.options.cflags != "_DUMMY_":
-            tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
+        # if self.options.get_safe("cxxflags") is not None and self.options.cxxflags != "_DUMMY_":
+        #     tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + str(self.options.cxxflags)
+        # if self.options.get_safe("cflags") is not None and self.options.cflags != "_DUMMY_":
+        #     tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + str(self.options.cflags)
 
-        if self.settings.compiler != "msvc":
-            # tc.variables["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
-            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
-        if self.settings.compiler == "msvc":
-            tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
+        # if self.settings.compiler != "msvc":
+        #     # tc.variables["CONAN_CXX_FLAGS"] += " -Wno-deprecated-declarations"
+        #     tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " -Wno-deprecated-declarations"
+        # if self.settings.compiler == "msvc":
+        #     tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " /DBOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE"
 
         if self.options.get_safe("march_id") is not None:
             tc.variables["MARCH_ID"] = self.options.march_id
@@ -1519,19 +1510,17 @@ class KnuthConanFileV2(ConanFile):
         if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
             tc.variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
 
-        if not pure_c:
-            if self.settings.compiler == "gcc":
-                if float(str(self.settings.compiler.version)) >= 5:
-                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
-                else:
-                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(True)
-            elif self.settings.compiler == "clang":
-                if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
-                    tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
+        # if not pure_c:
+        #     if self.settings.compiler == "gcc":
+        #         if float(str(self.settings.compiler.version)) >= 5:
+        #             tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
+        #         else:
+        #             tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(True)
+        #     elif self.settings.compiler == "clang":
+        #         if str(self.settings.compiler.libcxx) == "libstdc++" or str(self.settings.compiler.libcxx) == "libstdc++11":
+        #             tc.variables["NOT_USE_CPP11_ABI"] = option_on_off(False)
 
         pass_march_to_compiler(self, tc)
-        # self.output.info("CONAN_CXX_FLAGS: %s" % (tc.variables["CONAN_CXX_FLAGS"], ))
-        # self.output.info("cmake.command_line: %s" % (cmake.command_line, ))
         return tc
 
     @property
