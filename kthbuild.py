@@ -621,7 +621,8 @@ def march_conan_manip(conanobj):
                 exts_diff = set_diff(level3_exts, exts)
                 exts_names = extensions_to_names(exts_diff)
                 exts_str = ", ".join(exts_names)
-                conanobj.output.warn(f"Your platform is not compatible the reference platform (x86-64-v3).\nThe following extensions are not supported by your platform: {exts_str}.")
+                #.warn()
+                conanobj.output.info(f"Your platform is not compatible the reference platform (x86-64-v3).\nThe following extensions are not supported by your platform: {exts_str}.")
 
             march_id = conanobj.march_data['comp_marchid']
             march_names = conanobj.march_data['comp_names']
@@ -648,7 +649,8 @@ def march_conan_manip(conanobj):
                 exts_diff = set_diff(level3_exts, exts)
                 exts_names = extensions_to_names(exts_diff)
                 exts_str = ", ".join(exts_names)
-                conanobj.output.warn(f"Your platform is not compatible the reference platform (x86-64-v3).\nThe following extensions are not supported by your platform: {exts_str}.")
+                # .warn()
+                conanobj.output.info(f"Your platform is not compatible the reference platform (x86-64-v3).\nThe following extensions are not supported by your platform: {exts_str}.")
 
         elif conanobj.options.march_strategy == "download_or_fail":
             # conanobj.output.info(f"download_or_fail {conanobj.march_data}")
