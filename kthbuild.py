@@ -594,7 +594,7 @@ def march_conan_manip(conanobj):
     march_names = None
     march_flags = None
 
-    if conanobj.options.march_id is None:
+    if not conanobj.options.march_id:
         march_kth_defs = None
 
         conanobj.march_data = get_all_data(str(conanobj.settings.os),
@@ -666,7 +666,7 @@ def march_conan_manip(conanobj):
             march_names = conanobj.march_data['level3_names']
             march_flags = conanobj.march_data['level3_flags']
 
-        # conanobj.options.march_id = march_id
+        conanobj.options.march_id = march_id
     else:
         march_id = str(conanobj.options.march_id)
         conanobj.march_from_cpuid = False
