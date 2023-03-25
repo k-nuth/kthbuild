@@ -14,7 +14,7 @@ import platform
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "2.8.0"
+__version__ = "2.8.1"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
@@ -44,14 +44,12 @@ class PostInstallCommand(install):
     def run(self):
         install.run(self)
         if not running_in_cpt_context():
-            self.__setup_conan_remote("kthbuild_kth_temp_",     'https://knuth.jfrog.io/artifactory/api/conan/knuth')
+            self.__setup_conan_remote("kth",     'https://packages.kth.cash/api/')
             # self.__setup_conan_remote("kthbuild_tao_temp_",    'https://taocpp.jfrog.io/artifactory/api/conan/tao')
             self.__setup_conan_remote("tao",                    'https://taocpp.jfrog.io/artifactory/api/conan/tao')
 
     def __setup_conan_remote(self, remote_alias, remote_url):
         try:
-            # remote_alias = "kthbuild_kth_temp_"
-            # remote_url = 'https://knuth.jfrog.io/artifactory/api/conan/knuth'
             params = ["conan", "remote", "add", remote_alias, remote_url]
             res = subprocess.Popen(params, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, _ = res.communicate()
