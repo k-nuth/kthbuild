@@ -902,7 +902,9 @@ class KnuthConanFileV2(ConanFile):
         #     self.info.settings.compiler.version = "GCC [5, 12]"
 
         if self.info.settings.compiler == "gcc":
-            if v >= "12":
+            if v >= "13":
+                self.info.settings.compiler.version = "GCC >= 13"
+            elif v >= "12":
                 self.info.settings.compiler.version = "GCC >= 12"
             else:
                 self.info.settings.compiler.version = "GCC < 12"
