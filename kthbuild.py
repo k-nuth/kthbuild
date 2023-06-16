@@ -958,7 +958,18 @@ class KnuthConanFileV2(ConanFile):
         if self.options.get_safe("db") is None:
             return
 
-        if self.options.db == "legacy":
+        if self.options.db == "dynamic":
+            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+            tc.variables["DB_SPENDS"] = option_on_off(False)
+            tc.variables["DB_HISTORY"] = option_on_off(False)
+            tc.variables["DB_STEALTH"] = option_on_off(False)
+            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+            tc.variables["DB_LEGACY"] = option_on_off(False)
+            tc.variables["DB_NEW"] = option_on_off(False)
+            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+            tc.variables["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_DYNAMIC"] = option_on_off(True)
+        elif self.options.db == "legacy":
             tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
             tc.variables["DB_SPENDS"] = option_on_off(False)
             tc.variables["DB_HISTORY"] = option_on_off(False)
@@ -968,6 +979,7 @@ class KnuthConanFileV2(ConanFile):
             tc.variables["DB_NEW"] = option_on_off(False)
             tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
             tc.variables["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_DYNAMIC"] = option_on_off(False)
         elif self.options.db == "legacy_full":
             tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(True)
             tc.variables["DB_SPENDS"] = option_on_off(True)
@@ -978,6 +990,7 @@ class KnuthConanFileV2(ConanFile):
             tc.variables["DB_NEW"] = option_on_off(False)
             tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
             tc.variables["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_DYNAMIC"] = option_on_off(False)
         elif self.options.db == "pruned":
             tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
             tc.variables["DB_SPENDS"] = option_on_off(False)
@@ -988,6 +1001,7 @@ class KnuthConanFileV2(ConanFile):
             tc.variables["DB_NEW"] = option_on_off(True)
             tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
             tc.variables["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_DYNAMIC"] = option_on_off(False)
         elif self.options.db == "default":
             tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
             tc.variables["DB_SPENDS"] = option_on_off(False)
@@ -998,6 +1012,7 @@ class KnuthConanFileV2(ConanFile):
             tc.variables["DB_NEW"] = option_on_off(True)
             tc.variables["DB_NEW_BLOCKS"] = option_on_off(True)
             tc.variables["DB_NEW_FULL"] = option_on_off(False)
+            tc.variables["DB_DYNAMIC"] = option_on_off(False)
         elif self.options.db == "full":
             tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
             tc.variables["DB_SPENDS"] = option_on_off(False)
@@ -1008,6 +1023,7 @@ class KnuthConanFileV2(ConanFile):
             tc.variables["DB_NEW"] = option_on_off(True)
             tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
             tc.variables["DB_NEW_FULL"] = option_on_off(True)
+            tc.variables["DB_DYNAMIC"] = option_on_off(False)
 
     def cmake_toolchain_basis(self, pure_c=False):
         tc = CMakeToolchain(self)
