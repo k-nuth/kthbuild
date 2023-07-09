@@ -768,13 +768,17 @@ class KnuthConanFileV2(ConanFile):
 
         if self.settings.arch != "x86_64":
             self.output.info("march_id is disabled for architectures other than x86_64, your architecture: %s" % (self.settings.arch,))
-            self.options.remove("march_id")
-            self.options.remove("march_strategy")
+            # self.options.remove("march_id")
+            # self.options.remove("march_strategy")
+            del self.options.march_id
+            del self.options.march_strategy
 
         if self.settings.compiler == "msvc":
-            self.options.remove("fPIC")
+            # self.options.remove("fPIC")
+            del self.options.fPIC
             if self.is_shared:
-                self.options.remove("shared")
+                # self.options.remove("shared")
+                del self.options.shared
 
     def validate(self, pure_c=False):
         # self.output.info(f"validate() self.march_data: {self.march_data}")
