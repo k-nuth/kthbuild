@@ -958,21 +958,21 @@ class KnuthConanFileV2(ConanFile):
         if self.info.options.get_safe("march_strategy") is not None:
             self.info.options.march_strategy = "ANY"
 
-    def _cmake_database(self, tc):
-        if self.options.get_safe("db") is None:
-            return
+    # def _cmake_database(self, tc):
+    #     if self.options.get_safe("db") is None:
+    #         return
 
-        if self.options.db == "dynamic":
-            tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
-            tc.variables["DB_SPENDS"] = option_on_off(False)
-            tc.variables["DB_HISTORY"] = option_on_off(False)
-            tc.variables["DB_STEALTH"] = option_on_off(False)
-            tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
-            tc.variables["DB_LEGACY"] = option_on_off(False)
-            tc.variables["DB_NEW"] = option_on_off(False)
-            tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
-            tc.variables["DB_NEW_FULL"] = option_on_off(False)
-            tc.variables["DB_DYNAMIC"] = option_on_off(True)
+    #     if self.options.db == "dynamic":
+    #         tc.variables["DB_TRANSACTION_UNCONFIRMED"] = option_on_off(False)
+    #         tc.variables["DB_SPENDS"] = option_on_off(False)
+    #         tc.variables["DB_HISTORY"] = option_on_off(False)
+    #         tc.variables["DB_STEALTH"] = option_on_off(False)
+    #         tc.variables["DB_UNSPENT_LEGACY"] = option_on_off(False)
+    #         tc.variables["DB_LEGACY"] = option_on_off(False)
+    #         tc.variables["DB_NEW"] = option_on_off(False)
+    #         tc.variables["DB_NEW_BLOCKS"] = option_on_off(False)
+    #         tc.variables["DB_NEW_FULL"] = option_on_off(False)
+    #         tc.variables["DB_DYNAMIC"] = option_on_off(True)
 
     def cmake_toolchain_basis(self, pure_c=False):
         tc = CMakeToolchain(self)
@@ -1014,7 +1014,7 @@ class KnuthConanFileV2(ConanFile):
         if self.options.get_safe("currency") is not None:
             tc.variables["CURRENCY"] = self.options.currency
 
-        self._cmake_database(tc)
+        # self._cmake_database(tc)
 
         if self.options.get_safe("cmake_export_compile_commands") is not None and self.options.cmake_export_compile_commands:
             tc.variables["CMAKE_EXPORT_COMPILE_COMMANDS"] = option_on_off(self.options.cmake_export_compile_commands)
