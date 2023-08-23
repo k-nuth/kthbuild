@@ -1006,8 +1006,8 @@ class KnuthConanFileV2(ConanFile):
         if self.options.get_safe("march_id") is not None:
             tc.variables["MARCH_ID"] = self.options.march_id
 
-
-        tc.variables["MARCH_NAMES_FULL_STR"] = self.march_names_full_str
+        if self.settings.arch == "x86_64":
+            tc.variables["MARCH_NAMES_FULL_STR"] = self.march_names_full_str
 
         tc.variables["KTH_PROJECT_VERSION"] = self.version
 
