@@ -4,17 +4,17 @@ on: [push, pull_request]
 
 jobs:
   builds:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
     name: Linux
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           submodules: true
-      - uses: actions/setup-python@v1
+      - uses: actions/setup-python@v5
         with:
-          python-version: "3.8"
+          python-version: "3.12"
 
       - name: Install Dependencies
         run: |
@@ -22,8 +22,7 @@ jobs:
           pip install wheel --upgrade
           pip install twine --upgrade
           pip install cpuid --upgrade
-          # pip install conan --upgrade
-          pip install "conan>=1.50.0,<2.0" --upgrade
+          pip install "conan>=2.0" --upgrade
           pip install setuptools --upgrade
         shell: bash
 
@@ -33,39 +32,21 @@ jobs:
           echo "UNIT_TESTS=true" >> $GITHUB_ENV
           echo "UPLOAD_PKG=true" >> $GITHUB_ENV
 
-      - name: Build
-        env:
-          PYPI_USER_NAME: ${{ secrets.PYPI_USER_NAME }}
-          PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      - name: Build package
         shell: bash
         run: |
-          echo ${PYPI_USER_NAME}
-          echo ${PYPI_PASSWORD}
-
-
           set -e
           set -x
           python --version
-
-          # pip install -v -e .
           pip install -e .
+          python setup.py sdist
 
-          if [[ "${UPLOAD_PKG}" == "true" ]]; then
-            python setup.py sdist
-            # python setup.py bdist_wheel --universal
-          fi
-
-          if [[ "${UPLOAD_PKG}" == "true" ]]; then
-            twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
-
-            # if [[ "${TRAVIS_BRANCH}" == "master" ]]; then
-            #   twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
-            # else
-            #   # For Testing Release
-            #   # twine upload -r test -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} dist/* || true
-            #   twine upload -u ${PYPI_USER_NAME} -p ${PYPI_PASSWORD} --repository-url https://test.pypi.org/legacy/ dist/*  || true
-            # fi
-          fi
+      - name: Upload to PyPI
+        if: github.ref == 'refs/heads/master'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          skip-existing: true
 
 
 # References:

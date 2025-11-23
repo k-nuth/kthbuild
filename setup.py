@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Copyright (c) 2016-2023 Knuth Project developers.
+# Copyright (c) 2016-2025 Knuth Project developers.
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -14,11 +14,11 @@ import platform
 __title__ = "kthbuild"
 __summary__ = "Knuth node build tools"
 __uri__ = "https://github.com/k-nuth/kthbuild"
-__version__ = "3.5.0"
+__version__ = "4.0.0"
 __author__ = "Fernando Pelliccioni"
 __email__ = "fpelliccioni@gmail.com"
 __license__ = "MIT"
-__copyright__ = "Copyright (c) 2019-2023 Knuth Project"
+__copyright__ = "Copyright (c) 2019-2025 Knuth Project"
 
 
 install_requires = [
@@ -26,7 +26,7 @@ install_requires = [
 ]
 
 if platform.machine() == 'x86_64':
-    install_requires.append("microarch >= 0.1.1")
+    install_requires.append("microarch >= 0.2.1")
 
 def running_in_cpt_context():
     # -e CONAN_UPLOAD="https://knuth.jfrog.io/artifactory/api/conan/knuth@True@upload_repo"
@@ -67,11 +67,16 @@ class PostInstallCommand(install):
             print("Error in __setup_conan_remote 2")
             # return default
 
+# Read README for long description
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
+
 setup(
     name = __title__,
     version = __version__,
     description = __summary__,
-    long_description=open("./README.rst").read(),
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     license = __license__,
     url = __uri__,
     author = __author__,
@@ -104,6 +109,9 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
 
