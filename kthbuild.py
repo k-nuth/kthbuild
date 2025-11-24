@@ -906,29 +906,53 @@ class KnuthConanFileV2(ConanFile):
         # if self.info.settings.compiler == "gcc" and (v >= "5" and v <= "12"):
         #     self.info.settings.compiler.version = "GCC [5, 12]"
 
-        if self.info.settings.compiler == "gcc":
-            if v >= "13":
-                self.info.settings.compiler.version = "GCC >= 13"
-            elif v >= "12":
-                self.info.settings.compiler.version = "GCC >= 12"
-            else:
-                self.info.settings.compiler.version = "GCC < 12"
+        # if self.info.settings.compiler == "gcc":
+        #     if v >= "15":
+        #         self.info.settings.compiler.version = "GCC >= 15"
+        #     elif v >= "14":
+        #         self.info.settings.compiler.version = "GCC >= 14"
+        #     elif v >= "13":
+        #         self.info.settings.compiler.version = "GCC >= 13"
+        #     elif v >= "12":
+        #         self.info.settings.compiler.version = "GCC >= 12"
+        #     else:
+        #         self.info.settings.compiler.version = "GCC < 12"
 
-        if self.info.settings.compiler == "clang":
-            if v >= "7" and v <= "15":
-                self.info.settings.compiler.version = "Clang [7, 15]"
-            elif v > "15":
-                self.info.settings.compiler.version = "Clang > 15"
-            else:
-                self.info.settings.compiler.version = "Clang < 7"
+        # if self.info.settings.compiler == "clang":
+        #     if v >= "20":
+        #         self.info.settings.compiler.version = "Clang >= 20"
+        #     elif v >= "19":
+        #         self.info.settings.compiler.version = "Clang >= 19"
+        #     elif v >= "18":
+        #         self.info.settings.compiler.version = "Clang >= 18"
+        #     elif v >= "17":
+        #         self.info.settings.compiler.version = "Clang >= 17"
+        #     elif v >= "16":
+        #         self.info.settings.compiler.version = "Clang >= 16"
+        #     elif v >= "15":
+        #         self.info.settings.compiler.version = "Clang >= 15"
+        #     elif v >= "14":
+        #         self.info.settings.compiler.version = "Clang >= 14"
+        #     elif v >= "13":
+        #         self.info.settings.compiler.version = "Clang >= 13"
+        #     else:
+        #         self.info.settings.compiler.version = "Clang < 13"
 
-        if self.info.settings.compiler == "apple-clang":
-            if (v >= "14" and v <= "14"):
-                self.info.settings.compiler.version = "apple-clang [14, 14]"
-            elif v > "14":
-                self.info.settings.compiler.version = "apple-clang > 14"
-            else:
-                self.info.settings.compiler.version = "apple-clang < 14"
+        # if self.info.settings.compiler == "apple-clang":
+        #     if v >= "18":
+        #         self.info.settings.compiler.version = "apple-clang >= 18"
+        #     elif v >= "17":
+        #         self.info.settings.compiler.version = "apple-clang >= 17"
+        #     elif v >= "16":
+        #         self.info.settings.compiler.version = "apple-clang >= 16"
+        #     elif v >= "15":
+        #         self.info.settings.compiler.version = "apple-clang >= 15"
+        #     elif v >= "14":
+        #         self.info.settings.compiler.version = "apple-clang >= 14"
+        #     elif v >= "13":
+        #         self.info.settings.compiler.version = "apple-clang >= 13"
+        #     else:
+        #         self.info.settings.compiler.version = "apple-clang < 13"
 
         # self.output.info(f"compatible_packages: {self.compatible_packages}")
 
@@ -957,6 +981,62 @@ class KnuthConanFileV2(ConanFile):
 
         if self.info.options.get_safe("march_strategy") is not None:
             self.info.options.march_strategy = "ANY"
+
+    def compatibility(self):
+        out = []
+
+        # GCC compatibility: newer versions can use binaries from older versions
+        if self.settings.compiler == "gcc":
+            compiler_version = str(self.settings.compiler.version)
+            if compiler_version == "15":
+                out.append({"settings": [("compiler.version", "14")]})
+                out.append({"settings": [("compiler.version", "13")]})
+            elif compiler_version == "14":
+                out.append({"settings": [("compiler.version", "13")]})
+
+        # Clang compatibility: newer versions can use binaries from older versions
+        elif self.settings.compiler == "clang":
+            compiler_version = str(self.settings.compiler.version)
+            if compiler_version == "20":
+                for v in ("19", "18", "17", "16", "15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "19":
+                for v in ("18", "17", "16", "15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "18":
+                for v in ("17", "16", "15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "17":
+                for v in ("16", "15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "16":
+                for v in ("15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "15":
+                for v in ("14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "14":
+                out.append({"settings": [("compiler.version", "13")]})
+
+        # Apple Clang compatibility: newer versions can use binaries from older versions
+        elif self.settings.compiler == "apple-clang":
+            compiler_version = str(self.settings.compiler.version)
+            if compiler_version == "18":
+                for v in ("17", "16", "15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "17":
+                for v in ("16", "15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "16":
+                for v in ("15", "14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "15":
+                for v in ("14", "13"):
+                    out.append({"settings": [("compiler.version", v)]})
+            elif compiler_version == "14":
+                out.append({"settings": [("compiler.version", "13")]})
+
+        return out
 
     # def _cmake_database(self, tc):
     #     if self.options.get_safe("db") is None:
