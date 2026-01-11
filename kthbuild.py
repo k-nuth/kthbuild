@@ -727,8 +727,9 @@ def pass_march_to_compiler(conanobj, tc):
 
     conanobj.output.info("Compiler flags: %s" % flags)
 
-    tc.variables["CONAN_CXX_FLAGS"] = tc.variables.get("CONAN_CXX_FLAGS", "") + " " + flags
-    tc.variables["CONAN_C_FLAGS"] = tc.variables.get("CONAN_C_FLAGS", "") + " " + flags
+    # Conan 2.x: use extra_cxxflags/extra_cflags instead of CMake variables
+    tc.extra_cxxflags.append(flags)
+    tc.extra_cflags.append(flags)
 
 def get_conan_get(package, remote=None, default=None):
     try:
